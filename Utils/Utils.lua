@@ -4,6 +4,7 @@ BigFootBot.utils = {}
 BigFootBot.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 BigFootBot.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 BigFootBot.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+BigFootBot.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 
 local U = BigFootBot.utils
 

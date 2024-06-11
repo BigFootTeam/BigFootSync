@@ -215,6 +215,8 @@ local function SavePlayerCombatRatingData(t)
         CR = CR_RETAIL
     elseif BigFootBot.isWrath then
         CR = CR_WRATH
+    elseif BigFootBot.isCata then
+        CR = CR_CATA -- TODO: 之后再说
     end
     if not CR then return end
 
