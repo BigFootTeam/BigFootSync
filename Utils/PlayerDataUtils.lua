@@ -86,7 +86,7 @@ local function SavePlayerStatData(t)
     -- 最大能量值
     t["powerMax"] = UnitPowerMax("player")
     -- 能量类型 TODO: 根据天赋仅保存主要能量类型，目前保存当前类型
-    t["powerType"] = UnitPowerType("player")
+    t["powerType"] = UnitPowerType("player", 0) -- MANA
     -- 护甲值
     t["armor"] = select(2, UnitArmor("player"))
     -- 护甲物理减伤百分比（目标等级相同时）
@@ -392,6 +392,7 @@ function P.SaveGuildMemberData(t, guildName, guildRealm)
             t[name] = { ["updateRequired"] = true }
         end
         
+        t[name]["name"] = U.ToShortName(name)
         t[name]["level"] = level
         t[name]["classId"] = U.GetClassID(classFile)
         t[name]["guild"] = guildName
@@ -416,20 +417,22 @@ function P.SaveFriendData(t)
     for i = 1, C_FriendList.GetNumFriends() do
         local info = C_FriendList.GetFriendInfoByIndex(i)
         
-        local realm
+        local name, realm
         -- 角色名可能不带服务器
         if strfind(info.name, "-") then
-            realm = select(2, strsplit("-", info.name))
+            name, realm = strsplit("-", info.name)
         else
+            name = info.name
             realm = GetNormalizedRealmName()
             info.name = info.name.."-"..GetNormalizedRealmName()
         end
 
         if not t[info.name] then
             -- 标记该记录需要进一步的信息完善
-            t[info.name] = { ["updateRequired"] = true }
+            t[info.name] = {["updateRequired"] = true}
         end
 
+        t[info.name]["name"] = name
         t[info.name]["guid"] = info.guid
         t[info.name]["level"] = info.level -- 未在线可能为0
         t[info.name]["realm"] = realm
@@ -456,6 +459,7 @@ function P.SaveBNetFriendData(t, realmDataTable)
                     t[name] = { ["updateRequired"] = true }
                 end
 
+                t[name]["name"] = info.characterName
                 t[name]["guid"] = info.playerGuid
                 t[name]["level"] = info.characterLevel
                 t[name]["realm"] = info.realmDisplayName
@@ -464,7 +468,12 @@ function P.SaveBNetFriendData(t, realmDataTable)
                 -- info.raceName: 本地化后的种族名
 
                 -- 补充服务器信息
-                realmDataTable[info.realmID] = info.realmDisplayName
+                if not realmDataTable[info.realmID] then
+                    realmDataTable[info.realmID] = {
+                        ["name"] = info.realmDisplayName,
+                        ["normalizedName"] = info.realmName,
+                    }
+                end
             end
         end
     end

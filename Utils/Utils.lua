@@ -63,6 +63,15 @@ function U.UnitFullName(unit)
 end
 
 ---------------------------------------------------------------------
+-- UnitShortName
+---------------------------------------------------------------------
+function U.ToShortName(fullName)
+    if not fullName then return "" end
+    local shortName = strsplit("-", fullName)
+    return shortName
+end
+
+---------------------------------------------------------------------
 -- IterateGroupMembers
 ---------------------------------------------------------------------
 function U.IterateGroupMembers()
