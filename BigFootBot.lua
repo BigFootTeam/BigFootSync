@@ -20,6 +20,8 @@ end)
 ---------------------------------------------------------------------
 function frame:ADDON_LOADED(arg)
     if arg == addonName then
+        frame:UnregisterEvent("ADDON_LOADED")
+
         -- 保存服务器ID、名称
         if type(BigFootBotRealmDB) ~= "table" then BigFootBotRealmDB = {} end
 
@@ -57,7 +59,7 @@ function frame:ADDON_LOADED(arg)
             ["talents"] = {}, -- 天赋
         }
 
-        frame:RegisterEvent("PLAYER_LOGOUT")
+        -- frame:RegisterEvent("PLAYER_LOGOUT")
         frame:RegisterEvent("PLAYER_LOGIN")
         frame:RegisterEvent("GROUP_ROSTER_UPDATE")
         frame:RegisterEvent("GUILD_ROSTER_UPDATE")
@@ -67,17 +69,13 @@ function frame:ADDON_LOADED(arg)
 end
 
 ---------------------------------------------------------------------
--- 重载后/登出时
+-- 重载后/登出时，FIXME: 无法在此事件中获取数据
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGOUT()
     -- 保存玩家自己的信息到角色配置
-    P.SavePlayerBaseData(BigFootBotPlayerDB["base"])
-    P.SavePlayerStatData(BigFootBotPlayerDB["stats"])
-    P.SavePlayerCombatRatingData(BigFootBotPlayerDB)
-    P.SavePlayerEquipmentData(BigFootBotPlayerDB["equipments"])
-    P.SavePlayerTalents(BigFootBotPlayerDB["talents"])
+    P.SavePlayerData(BigFootBotPlayerDB)
 
-    -- 保存玩家自己的信息到账号配置
+    -- 保存玩家自己的基础信息到账号配置
     P.SaveUnitBaseData(BigFootBotCharacterDB, "player", true)
     
     -- 保存成就信息
@@ -89,7 +87,16 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
     -- 保存服务器信息
-    BigFootBotRealmDB[GetRealmID()] = GetRealmName()
+    BigFootBotRealmDB[GetRealmID()] = {
+        ["name"] = GetRealmName(),
+        ["normalizedName"] = GetNormalizedRealmName(),
+    }
+
+    -- 保存玩家自己的信息到角色配置
+    P.SavePlayerData(BigFootBotPlayerDB)
+
+    -- 保存玩家自己的基础信息到账号配置
+    P.SaveUnitBaseData(BigFootBotCharacterDB, "player", true)
 
     -- 保存成就信息
     A.SaveAchievements(BigFootBotAchievementDB)
@@ -120,7 +127,7 @@ function frame:GUILD_ROSTER_UPDATE()
     if not IsInGuild() then return end
     
     local guildName, _, _, guildRealm = GetGuildInfo("player")
-    P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm or GetRealmName())
+    P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm or GetNormalizedRealmName())
 end
 
 ---------------------------------------------------------------------

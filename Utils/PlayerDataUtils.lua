@@ -50,21 +50,22 @@ end
 ---------------------------------------------------------------------
 -- 保存玩家自己的基础信息
 ---------------------------------------------------------------------
-function P.SavePlayerBaseData(t)
+local function SavePlayerBaseData(t)
     P.SaveUnitBaseData(t, "player")
 
     -- 头衔
     t["titleId"] = GetCurrentTitle()
-    if t["titleId"] ~= -1 then
-        t["titleName"] = GetTitleName(t["titleId"])
-    end
+    -- if t["titleId"] ~= -1 then
+    --     t["titleName"] = GetTitleName(t["titleId"])
+    -- end
     
     -- 装等
     t["avgItemLevel"], t["avgItemLevelEquipped"] = GetAverageItemLevel()
     
     if BigFootBot.isRetail then
         -- 专精，无法从 GetSpecializationInfo(GetSpecialization()) 获取，原因未知
-        t["specId"] = GetSpecializationInfoForClassID(t["classId"], GetSpecialization())
+        -- t["specId"] = GetSpecializationInfoForClassID(t["classId"], GetSpecialization())
+        t["specId"] = GetSpecializationInfo(GetSpecialization())
     end
 end
 
@@ -72,7 +73,7 @@ end
 ---------------------------------------------------------------------
 -- 保存玩家自己的属性信息
 ---------------------------------------------------------------------
-function P.SavePlayerStatData(t)
+local function SavePlayerStatData(t)
     -- 主属性
     local stats = {"strength", "agility", "stamina", "intellect"}
     if not BigFootBot.isRetail then tinsert(stats, "spirit") end
@@ -208,7 +209,7 @@ local CR_WRATH = {
     "CR_ARMOR_PENETRATION", -- 25
 }
 
-function P.SavePlayerCombatRatingData(t)
+local function SavePlayerCombatRatingData(t)
     local CR
     if BigFootBot.isRetail then
         CR = CR_RETAIL
@@ -279,7 +280,7 @@ local SLOTS_NON_RETAIL = {
 
 -- TODO: function P.SaveUnitEquipmentData(unit, t)
 
-function P.SavePlayerEquipmentData(t)
+local function SavePlayerEquipmentData(t)
 
     local SLOTS
     if BigFootBot.isRetail then
@@ -300,6 +301,8 @@ end
 ---------------------------------------------------------------------
 -- 保存玩家自己的天赋信息
 ---------------------------------------------------------------------
+local SavePlayerTalents
+
 if BigFootBot.isRetail then
     local function SaveTalentsByConfigID(t, configId)
         local configInfo = C_Traits.GetConfigInfo(configId)
@@ -317,7 +320,7 @@ if BigFootBot.isRetail then
         end
     end
 
-    function P.SavePlayerTalents(t)
+    SavePlayerTalents = function(t)
         wipe(t)
         
         local configId = C_ClassTalents.GetActiveConfigID()
@@ -341,7 +344,7 @@ if BigFootBot.isRetail then
         -- end
     end
 else
-    function P.SavePlayerTalents(t)
+    SavePlayerTalents = function(t)
         -- 仅保存当前天赋配置
         for tabIndex = 1, GetNumTalentTabs() do
             -- 每个“专精”单独存放
@@ -364,6 +367,16 @@ else
     end
 end
 
+---------------------------------------------------------------------
+-- 保存玩家自己的数据
+---------------------------------------------------------------------
+function P.SavePlayerData(t)
+    SavePlayerBaseData(t["base"])
+    SavePlayerStatData(t["stats"])
+    SavePlayerCombatRatingData(t)
+    SavePlayerEquipmentData(t["equipments"])
+    SavePlayerTalents(t["talents"])
+end
 
 ---------------------------------------------------------------------
 -- 保存公会玩家数据
@@ -406,7 +419,7 @@ function P.SaveFriendData(t)
         if strfind(info.name, "-") then
             realm = select(2, strsplit("-", info.name))
         else
-            realm = GetRealmName()
+            realm = GetNormalizedRealmName()
             info.name = info.name.."-"..GetNormalizedRealmName()
         end
 
