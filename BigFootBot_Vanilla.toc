@@ -1,0 +1,14 @@
+﻿## Interface: 11500
+## Title: [BF] BigFootBot
+## Title-zhCN: [大脚]信息收集
+## Title-zhTW: [大腳]信息收集
+## Notes: |cffbc8f8fCollect player data.|r
+## Notes-zhCN: |cff00ff00BigFootBot|r|n|cffbc8f8f收集游戏中的数据并上传到服务器与他人共享|r
+## Notes-zhTW: |cff00ff00BigFootBot|r|n|cffbc8f8f收集遊戲中的數據並上傳到服務器與他人共享|r
+## SavedVariables: BigFootBotRealmDB, BigFootBotCharacterDB, BigFootBotAccountDB
+## SavedVariablesPerCharacter: BigFootBotPlayerDB
+# Dependencies: BigFoot
+## X-Revision: BigFoot
+
+Utils\LoadUtils.xml
+BigFootBot.lua
