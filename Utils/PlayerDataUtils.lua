@@ -450,7 +450,7 @@ function P.SaveBNetFriendData(t, realmDataTable)
             info = info.gameAccountInfo
 
             -- 不同版本客户端之间可能获取不到服务器
-            if info.realmName then
+            if info.realmName and info.isInCurrentRegion then
                 -- 角色名不带服务器
                 local name = info.characterName.."-"..info.realmName
 
