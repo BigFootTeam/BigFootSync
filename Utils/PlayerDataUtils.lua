@@ -12,7 +12,7 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
 
     -- 全名
     local fullName = U.UnitFullName(unit)
-    
+
     -- 对于所有玩家的数据保存，以全名为索引
     if useFullNameAsIndex then
         if t[fullName] and not t[fullName]["updateRequired"] then
@@ -24,7 +24,7 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     else
         t["fullName"] = fullName
     end
-    
+
     -- guid（可能发生变化）
     t["guid"] = UnitGUID(unit)
     -- 名字、服务器
@@ -44,6 +44,8 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     t["faction"] = UnitFactionGroup(unit)
     -- 公会
     t["guild"] = GetGuildInfo(unit)
+    -- 地区（为了客户端读取方便）
+    t["region"] = BigFootBotAccountDB["region"]
 end
 
 
@@ -58,10 +60,10 @@ local function SavePlayerBaseData(t)
     -- if t["titleId"] ~= -1 then
     --     t["titleName"] = GetTitleName(t["titleId"])
     -- end
-    
+
     -- 装等
     t["avgItemLevel"], t["avgItemLevelEquipped"] = GetAverageItemLevel()
-    
+
     if BigFootBot.isRetail then
         -- 专精，无法从 GetSpecializationInfo(GetSpecialization()) 获取，原因未知
         -- t["specId"] = GetSpecializationInfoForClassID(t["classId"], GetSpecialization())
@@ -324,7 +326,7 @@ if BigFootBot.isRetail then
 
     SavePlayerTalents = function(t)
         wipe(t)
-        
+
         local configId = C_ClassTalents.GetActiveConfigID()
         if not configId then return end
 
@@ -332,12 +334,12 @@ if BigFootBot.isRetail then
         SaveTalentsByConfigID(t, configId)
         local classId = select(2, UnitClassBase("player"))
         t["specId"] = GetSpecializationInfoForClassID(classId, GetSpecialization())
-        
+
         -- 保存所有
         -- for i = 1, GetNumSpecializationsForClassID(PlayerUtil.GetClassID()) do
         --     local specId = GetSpecializationInfoForClassID(PlayerUtil.GetClassID(),  i)
         --     t[specId] = {}
-            
+
         --     local configIDs = C_ClassTalents.GetConfigIDsBySpecID(specId)
         --     for _, configId in pairs(configIDs) do
         --         t[specId][configId] = {}
@@ -386,12 +388,12 @@ end
 function P.SaveGuildMemberData(t, guildName, guildRealm)
     for i = 1, GetNumGuildMembers() do
         local name, _, _, level, _, _, _, _, _, _, classFile = GetGuildRosterInfo(i)
-        
+
         if not t[name] then
             -- 标记该记录需要进一步的信息完善
             t[name] = { ["updateRequired"] = true }
         end
-        
+
         t[name]["name"] = U.ToShortName(name)
         t[name]["level"] = level
         t[name]["classId"] = U.GetClassID(classFile)
@@ -416,7 +418,7 @@ end
 function P.SaveFriendData(t)
     for i = 1, C_FriendList.GetNumFriends() do
         local info = C_FriendList.GetFriendInfoByIndex(i)
-        
+
         local name, realm
         -- 角色名可能不带服务器
         if strfind(info.name, "-") then
