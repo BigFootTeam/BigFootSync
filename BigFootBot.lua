@@ -35,6 +35,9 @@ function frame:ADDON_LOADED(arg)
             ["version"] = GetBuildInfo(), -- 当前账号配置对应的版本号，例如 10.2.0
         }
 
+        -- 玩家自己的公会信息（每次上线清空）
+        BigFootBotGuildDB = {}
+
         -- 账号成就（每次上线清空）
         if not BigFootBot.isVanilla then
             BigFootBotAchievementDB = {
@@ -42,13 +45,13 @@ function frame:ADDON_LOADED(arg)
                 ["totalPoints"] = 0,
             }
         end
-        
+
         -- 账号宠物（每次上线清空）
         -- BigFootBotPetDB = {}
-        
+
         -- 账号坐骑（每次上线清空）
         -- BigFootMountDB = {}
-        
+
         -- 玩家自己的数据（每次上线清空）
         BigFootBotPlayerDB = {
             ["base"] = {}, -- 基础属性
@@ -77,7 +80,7 @@ function frame:PLAYER_LOGOUT()
 
     -- 保存玩家自己的基础信息到账号配置
     P.SaveUnitBaseData(BigFootBotCharacterDB, "player", true)
-    
+
     -- 保存成就信息
     -- A.SaveAchievements(BigFootBotAchievementDB) -- 会增加下线/重载前的卡顿时间
 end
@@ -123,11 +126,19 @@ function frame:GUILD_ROSTER_UPDATE()
 
     frame:UnregisterEvent("GUILD_ROSTER_UPDATE") -- 仅扫描一次公会成员
     frame.updateGuildRosterRequired = nil
-    
+
     if not IsInGuild() then return end
-    
+
     local guildName, _, _, guildRealm = GetGuildInfo("player")
-    P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm or GetNormalizedRealmName())
+    guildRealm = guildRealm or GetNormalizedRealmName()
+
+    -- 公会信息
+    BigFootBotGuildDB["name"] = guildName
+    BigFootBotGuildDB["members"] = GetNumGuildMembers()
+    BigFootBotGuildDB["realm"] = guildRealm
+
+    -- 公会成员信息
+    P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm)
 end
 
 ---------------------------------------------------------------------
@@ -148,7 +159,7 @@ function frame:GROUP_ROSTER_UPDATE(immediate)
         end
         frame.updateGroupRosterRequired = nil
         P.SaveGroupMemberData(BigFootBotCharacterDB)
-    
+
     else -- 10秒内队伍成员没变化才进行遍历操作
         timer = C_Timer.NewTimer(10, function()
             timer = nil
