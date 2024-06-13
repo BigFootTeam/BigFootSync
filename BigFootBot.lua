@@ -33,6 +33,7 @@ function frame:ADDON_LOADED(arg)
             ["region"] = GetCVar("portal"), -- 区域
             ["isTrial"] = IsTrialAccount(), -- 是否为试玩账号
             ["version"] = GetBuildInfo(), -- 当前账号配置对应的版本号，例如 10.2.0
+            ["versionId"] = U.GetGameVersion(), -- 对应大脚客户端内的ID
         }
 
         -- 玩家自己的公会信息（每次上线清空）

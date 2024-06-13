@@ -9,6 +9,22 @@ BigFootBot.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 local U = BigFootBot.utils
 
 ---------------------------------------------------------------------
+-- GetGameVersion
+---------------------------------------------------------------------
+function U.GetGameVersion(wowProjectID)
+    wowProjectID = wowProjectID or WOW_PROJECT_ID
+    if wowProjectID == WOW_PROJECT_MAINLINE then
+        return 0
+    elseif wowProjectID == WOW_PROJECT_CLASSIC then
+        return 1
+    elseif wowProjectID == WOW_PROJECT_CATACLYSM_CLASSIC then
+        return 2
+    elseif wowProjectID == WOW_PROJECT_WRATH_CLASSIC then
+        return 3
+    end
+end
+
+---------------------------------------------------------------------
 -- GetClassID
 ---------------------------------------------------------------------
 local localizedClass = {}
@@ -51,14 +67,14 @@ function U.UnitFullName(unit)
     if not unit or not UnitIsPlayer(unit) then return end
 
     local name = GetUnitName(unit, true)
-    
+
     if name and not string.find(name, "-") then -- 同服角色不带服务器名
         local realm = GetNormalizedRealmName() -- 不可使用 GetRealmName()，其中可能包含空格或短横线
         if realm then
             name = name.."-"..realm
         end
     end
-    
+
     return name
 end
 

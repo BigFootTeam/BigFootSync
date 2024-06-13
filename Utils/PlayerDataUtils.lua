@@ -46,6 +46,8 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     t["guild"] = GetGuildInfo(unit)
     -- 地区（为了客户端读取方便）
     t["region"] = BigFootBotAccountDB["region"]
+    -- 游戏版本（为了客户端读取方便）
+    t["version"] = U.GetGameVersion()
 end
 
 
@@ -400,6 +402,7 @@ function P.SaveGuildMemberData(t, guildName, guildRealm)
         t[name]["guild"] = guildName
         t[name]["realm"] = guildRealm
         t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
+        t[name]["version"] = U.GetGameVersion() -- 游戏版本（为了客户端读取方便）
     end
 end
 
@@ -443,6 +446,7 @@ function P.SaveFriendData(t)
             t[info.name]["classId"] = U.GetClassID(info.class)
         end
         t[info.name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
+        t[info.name]["version"] = U.GetGameVersion() -- 游戏版本（为了客户端读取方便）
     end
 end
 
@@ -453,8 +457,11 @@ function P.SaveBNetFriendData(t, realmDataTable)
         if info.gameAccountInfo and info.gameAccountInfo.clientProgram == _G.BNET_CLIENT_WOW then
             info = info.gameAccountInfo
 
+            -- 游戏版本（为了客户端读取方便）
+            local version = info.wowProjectID and U.GetGameVersion(info.wowProjectID)
+
             -- 不同版本客户端之间可能获取不到服务器
-            if info.realmName and info.isInCurrentRegion then
+            if info.realmName and info.isInCurrentRegion and version then
                 -- 角色名不带服务器
                 local name = info.characterName.."-"..info.realmName
 
@@ -480,6 +487,7 @@ function P.SaveBNetFriendData(t, realmDataTable)
                 end
 
                 t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
+                t[name]["version"] = version -- 游戏版本（为了客户端读取方便）
             end
         end
     end
