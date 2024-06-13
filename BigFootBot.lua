@@ -113,6 +113,9 @@ function frame:PLAYER_LOGIN()
     if IsInGroup() then
         frame:GROUP_ROSTER_UPDATE()
     end
+
+    -- 请求公会数据
+    C_GuildInfo.GuildRoster()
 end
 
 ---------------------------------------------------------------------
