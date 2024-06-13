@@ -399,6 +399,7 @@ function P.SaveGuildMemberData(t, guildName, guildRealm)
         t[name]["classId"] = U.GetClassID(classFile)
         t[name]["guild"] = guildName
         t[name]["realm"] = guildRealm
+        t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
     end
 end
 
@@ -441,6 +442,7 @@ function P.SaveFriendData(t)
         if info.class ~= _G.UNKNOWN then
             t[info.name]["classId"] = U.GetClassID(info.class)
         end
+        t[info.name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
     end
 end
 
@@ -476,6 +478,8 @@ function P.SaveBNetFriendData(t, realmDataTable)
                         ["normalizedName"] = info.realmName,
                     }
                 end
+
+                t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
             end
         end
     end
