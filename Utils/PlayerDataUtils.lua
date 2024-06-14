@@ -387,7 +387,7 @@ end
 ---------------------------------------------------------------------
 -- 保存公会玩家数据
 ---------------------------------------------------------------------
-function P.SaveGuildMemberData(t, guildName, guildRealm)
+function P.SaveGuildMemberData(t, guildName, guildRealm, guildFaction)
     for i = 1, GetNumGuildMembers() do
         local name, _, _, level, _, _, _, _, _, _, classFile = GetGuildRosterInfo(i)
 
@@ -400,7 +400,8 @@ function P.SaveGuildMemberData(t, guildName, guildRealm)
         t[name]["level"] = level
         t[name]["classId"] = U.GetClassID(classFile)
         t[name]["guild"] = guildName
-        t[name]["realm"] = guildRealm
+        t[name]["realm"] = guildRealm -- 默认为公会服务器
+        t[name]["faction"] = guildFaction -- 默认为公会阵营
         t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
         t[name]["version"] = U.GetGameVersion() -- 游戏版本（为了客户端读取方便）
     end

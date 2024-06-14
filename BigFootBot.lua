@@ -136,13 +136,16 @@ function frame:GUILD_ROSTER_UPDATE()
     local guildName, _, _, guildRealm = GetGuildInfo("player")
     guildRealm = guildRealm or GetNormalizedRealmName()
 
+    local guildFaction = GetGuildFactionGroup() == 0 and "Horde" or "Alliance"
+
     -- 公会信息
     BigFootBotGuildDB["name"] = guildName
     BigFootBotGuildDB["members"] = GetNumGuildMembers()
     BigFootBotGuildDB["realm"] = guildRealm
+    BigFootBotGuildDB["faction"] = guildFaction
 
     -- 公会成员信息
-    P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm)
+    P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm, guildFaction)
 end
 
 ---------------------------------------------------------------------
