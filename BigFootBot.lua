@@ -144,8 +144,8 @@ function frame:GUILD_ROSTER_UPDATE()
     BigFootBotGuildDB["realm"] = guildRealm
     BigFootBotGuildDB["faction"] = guildFaction
 
-    -- 公会成员信息
-    P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm, guildFaction)
+    -- TODO: 公会成员信息
+    -- P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm, guildFaction)
 end
 
 ---------------------------------------------------------------------
