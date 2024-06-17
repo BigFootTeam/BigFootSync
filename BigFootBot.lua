@@ -32,20 +32,16 @@ function frame:ADDON_LOADED(arg)
         BigFootBotAccountDB = {
             ["region"] = GetCVar("portal"), -- 区域
             ["isTrial"] = IsTrialAccount(), -- 是否为试玩账号
-            ["version"] = GetBuildInfo(), -- 当前账号配置对应的版本号，例如 10.2.0
-            ["versionId"] = U.GetGameVersion(), -- 对应大脚客户端内的ID
+            ["gameVersion"] = GetBuildInfo(), -- 当前账号配置对应的版本号，例如 10.2.7
+            ["clientVersion"] = U.GetGameVersion(), -- 对应大脚客户端内游戏版本ID
+            ["addonVersion"] = C_AddOns.GetAddOnMetadata(addonName, "Version"), -- 插件版本
         }
 
         -- 玩家自己的公会信息（每次上线清空）
         BigFootBotGuildDB = {}
 
         -- 账号成就（每次上线清空）
-        if not BigFootBot.isVanilla then
-            BigFootBotAchievementDB = {
-                ["achievements"] = {},
-                ["totalPoints"] = 0,
-            }
-        end
+        BigFootBotAchievementDB = {}
 
         -- 账号宠物（每次上线清空）
         -- BigFootBotPetDB = {}
@@ -103,7 +99,9 @@ function frame:PLAYER_LOGIN()
     P.SaveUnitBaseData(BigFootBotCharacterDB, "player", true)
 
     -- 保存成就信息
-    A.SaveAchievements(BigFootBotAchievementDB)
+    if not BigFootBot.isVanilla then
+        A.SaveAchievements(BigFootBotAchievementDB)
+    end
 
     -- 保存好友信息
     P.SaveFriendData(BigFootBotCharacterDB)

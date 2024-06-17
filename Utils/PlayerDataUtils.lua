@@ -15,15 +15,13 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
 
     -- 对于所有玩家的数据保存，以全名为索引
     if useFullNameAsIndex then
-        if t[fullName] and not t[fullName]["updateRequired"] then
-            return
-        else
-            t[fullName] = {}
-        end
+        if not t[fullName] then t[fullName] = {} end
         t = t[fullName]
     else
         t["fullName"] = fullName
     end
+
+    t["incomplete"] = nil
 
     -- guid（可能发生变化）
     t["guid"] = UnitGUID(unit)
@@ -48,6 +46,8 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     t["region"] = BigFootBotAccountDB["region"]
     -- 游戏版本（为了客户端读取方便）
     t["version"] = U.GetGameVersion()
+    -- 更新时间
+    t["lastSeen"] = time()
 end
 
 
@@ -385,6 +385,15 @@ function P.SavePlayerData(t)
 end
 
 ---------------------------------------------------------------------
+-- 保存队内玩家数据
+---------------------------------------------------------------------
+function P.SaveGroupMemberData(t)
+    for unit in U.IterateGroupMembers() do
+        P.SaveUnitBaseData(t, unit, true)
+    end
+end
+
+---------------------------------------------------------------------
 -- 保存公会玩家数据
 ---------------------------------------------------------------------
 function P.SaveGuildMemberData(t, guildName, guildRealm, guildFaction)
@@ -393,7 +402,7 @@ function P.SaveGuildMemberData(t, guildName, guildRealm, guildFaction)
 
         if not t[name] then
             -- 标记该记录需要进一步的信息完善
-            t[name] = { ["updateRequired"] = true }
+            t[name] = {["incomplete"] = true}
         end
 
         t[name]["name"] = U.ToShortName(name)
@@ -404,16 +413,7 @@ function P.SaveGuildMemberData(t, guildName, guildRealm, guildFaction)
         t[name]["faction"] = guildFaction -- 默认为公会阵营
         t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
         t[name]["version"] = U.GetGameVersion() -- 游戏版本（为了客户端读取方便）
-    end
-end
-
-
----------------------------------------------------------------------
--- 保存队内玩家数据
----------------------------------------------------------------------
-function P.SaveGroupMemberData(t)
-    for unit in U.IterateGroupMembers() do
-        P.SaveUnitBaseData(t, unit, true)
+        t[name]["lastSeen"] = time() -- 更新时间
     end
 end
 
@@ -436,18 +436,20 @@ function P.SaveFriendData(t)
 
         if not t[info.name] then
             -- 标记该记录需要进一步的信息完善
-            t[info.name] = {["updateRequired"] = true}
+            t[info.name] = {["incomplete"] = true}
         end
 
         t[info.name]["name"] = name
         t[info.name]["guid"] = info.guid
         t[info.name]["level"] = info.level -- 未在线可能为0
         t[info.name]["realm"] = realm
-        if info.class ~= _G.UNKNOWN then
-            t[info.name]["classId"] = U.GetClassID(info.class)
+        if info.className ~= _G.UNKNOWN then
+            t[info.name]["classId"] = U.GetClassID(info.className)
         end
         t[info.name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
+        t[info.name]["faction"] = UnitFactionGroup("player") -- 游戏好友，阵营与玩家一致
         t[info.name]["version"] = U.GetGameVersion() -- 游戏版本（为了客户端读取方便）
+        t[info.name]["lastSeen"] = time() -- 更新时间
     end
 end
 
@@ -468,7 +470,7 @@ function P.SaveBNetFriendData(t, realmDataTable)
 
                 if not t[name] then
                     -- 标记该记录需要进一步的信息完善
-                    t[name] = { ["updateRequired"] = true }
+                    t[name] = {["incomplete"] = true}
                 end
 
                 t[name]["name"] = info.characterName
@@ -477,6 +479,7 @@ function P.SaveBNetFriendData(t, realmDataTable)
                 t[name]["realm"] = info.realmDisplayName
                 t[name]["faction"] = info.factionName
                 t[name]["classId"] = U.GetClassID(info.className)
+                t[name]["lastSeen"] = time() -- 更新时间
                 -- info.raceName: 本地化后的种族名
 
                 -- 补充服务器信息
