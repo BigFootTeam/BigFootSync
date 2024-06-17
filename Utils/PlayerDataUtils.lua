@@ -45,7 +45,7 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     -- 地区（为了客户端读取方便）
     t["region"] = BigFootBotAccountDB["region"]
     -- 游戏版本（为了客户端读取方便）
-    t["version"] = U.GetGameVersion()
+    t["version"] = U.GetBigFootClientVersion()
     -- 更新时间
     t["lastSeen"] = time()
 end
@@ -412,7 +412,7 @@ function P.SaveGuildMemberData(t, guildName, guildRealm, guildFaction)
         t[name]["realm"] = guildRealm -- 默认为公会服务器
         t[name]["faction"] = guildFaction -- 默认为公会阵营
         t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
-        t[name]["version"] = U.GetGameVersion() -- 游戏版本（为了客户端读取方便）
+        t[name]["version"] = U.GetBigFootClientVersion() -- 游戏版本（为了客户端读取方便）
         t[name]["lastSeen"] = time() -- 更新时间
     end
 end
@@ -448,7 +448,7 @@ function P.SaveFriendData(t)
         end
         t[info.name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
         t[info.name]["faction"] = UnitFactionGroup("player") -- 游戏好友，阵营与玩家一致
-        t[info.name]["version"] = U.GetGameVersion() -- 游戏版本（为了客户端读取方便）
+        t[info.name]["version"] = U.GetBigFootClientVersion() -- 游戏版本（为了客户端读取方便）
         t[info.name]["lastSeen"] = time() -- 更新时间
     end
 end
@@ -461,7 +461,7 @@ function P.SaveBNetFriendData(t, realmDataTable)
             info = info.gameAccountInfo
 
             -- 游戏版本（为了客户端读取方便）
-            local version = info.wowProjectID and U.GetGameVersion(info.wowProjectID)
+            local version = info.wowProjectID and U.GetBigFootClientVersion(info.wowProjectID)
 
             -- 不同版本客户端之间可能获取不到服务器
             if info.realmName and info.isInCurrentRegion and version then

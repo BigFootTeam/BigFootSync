@@ -33,7 +33,7 @@ function frame:ADDON_LOADED(arg)
             ["region"] = GetCVar("portal"), -- 区域
             ["isTrial"] = IsTrialAccount(), -- 是否为试玩账号
             ["gameVersion"] = GetBuildInfo(), -- 当前账号配置对应的版本号，例如 10.2.7
-            ["clientVersion"] = U.GetGameVersion(), -- 对应大脚客户端内游戏版本ID
+            ["clientVersion"] = U.GetBigFootClientVersion(), -- 对应大脚客户端内游戏版本ID
             ["addonVersion"] = C_AddOns.GetAddOnMetadata(addonName, "Version"), -- 插件版本
         }
 

@@ -9,9 +9,9 @@ BigFootBot.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 local U = BigFootBot.utils
 
 ---------------------------------------------------------------------
--- GetGameVersion
+-- GetBigFootClientVersion
 ---------------------------------------------------------------------
-function U.GetGameVersion(wowProjectID)
+function U.GetBigFootClientVersion(wowProjectID)
     wowProjectID = wowProjectID or WOW_PROJECT_ID
     if wowProjectID == WOW_PROJECT_MAINLINE then
         return 0
