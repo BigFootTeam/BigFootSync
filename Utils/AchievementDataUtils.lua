@@ -40,9 +40,26 @@ local A = BigFootBot.achievements
 -- end)
 
 function A.SaveAchievements(t)
-    if BigFootBot.isVanilla then return end
+    -- 总成就点数
     t["totalPoints"] = GetTotalAchievementPoints()
-    
+
+    -- 最近完成成就
+    t["latest"] = {}
+    for _, achievementID in pairs({GetLatestCompletedAchievements()}) do
+        local id, name, points, completed, month, day, year, desc, _, icon, _, isGuild = GetAchievementInfo(achievementID)
+        tinsert(t["latest"], {
+            ["id"] = id,
+            -- ["name"] = name,
+            -- ["desc"] = desc,
+            ["points"] = points,
+            ["icon"] = icon,
+            ["date"] = year.."-"..month.."-"..day, -- year为年份的后两位数
+        })
+    end
+
+    -- TODO: 所有成就详情
+    t["all"] = {}
+    --[[
     local list = GetCategoryList() -- 成就分类
     for _, categoryId in pairs(list) do
         local total = GetCategoryNumAchievements(categoryId) -- 该分类下成就个数
@@ -62,5 +79,6 @@ function A.SaveAchievements(t)
             end
         end
     end
+    ]]
     -- updater:Show()
 end
