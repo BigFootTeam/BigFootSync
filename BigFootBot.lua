@@ -30,11 +30,13 @@ function frame:ADDON_LOADED(arg)
 
         -- 账号相关信息（每次上线清空）
         BigFootBotAccountDB = {
+            ["fullName"] = U.UnitFullName("player"),
             ["region"] = GetCVar("portal"), -- 区域
             ["isTrial"] = IsTrialAccount(), -- 是否为试玩账号
             ["gameVersion"] = GetBuildInfo(), -- 当前账号配置对应的版本号，例如 10.2.7
             ["clientVersion"] = U.GetBigFootClientVersion(), -- 对应大脚客户端内游戏版本ID
             ["addonVersion"] = C_AddOns.GetAddOnMetadata(addonName, "Version"), -- 插件版本
+            ["bigfootVersion"] = BIGFOOT_VERSION,
         }
 
         -- 玩家自己的公会信息（每次上线清空）
