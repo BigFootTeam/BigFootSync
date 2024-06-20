@@ -104,8 +104,8 @@ function frame:PLAYER_LOGIN()
     end
 
     -- 保存好友信息
-    P.SaveFriendData(BigFootBotCharacterDB)
-    P.SaveBNetFriendData(BigFootBotCharacterDB, BigFootBotRealmDB)
+    -- P.SaveFriendData(BigFootBotCharacterDB)
+    -- P.SaveBNetFriendData(BigFootBotCharacterDB, BigFootBotRealmDB)
 
     -- 已经在队伍中
     if IsInGroup() then
