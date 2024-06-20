@@ -145,6 +145,30 @@ function frame:GUILD_ROSTER_UPDATE()
     BigFootBotGuildDB["faction"] = guildFaction
     BigFootBotGuildDB["region"] = BigFootBotAccountDB["region"]
 
+    -- 公会在线人数/等级/职业分布
+    BigFootBotGuildDB["online"] = 0
+    BigFootBotGuildDB["levels"] = {}
+    BigFootBotGuildDB["classesAtMaxLevel"] = {}
+
+    -- NOTE: 怀旧服没有 GetMaxLevelForLatestExpansion
+    local maxLevel = GetMaxLevelForExpansionLevel(LE_EXPANSION_LEVEL_CURRENT)
+
+    for i = 1, BigFootBotGuildDB["members"] do
+        local name, _, _, level, _, _, _, _, isOnline, _, classFile = GetGuildRosterInfo(i)
+        if isOnline then
+            BigFootBotGuildDB["online"] = BigFootBotGuildDB["online"] + 1
+        end
+
+        -- 等级分布
+        BigFootBotGuildDB["levels"][level] = (BigFootBotGuildDB["levels"][level] or 0) + 1
+
+        -- 满级职业分布
+        local classId = U.GetClassID(classFile)
+        if level == maxLevel then
+            BigFootBotGuildDB["classesAtMaxLevel"][classId] = (BigFootBotGuildDB["classesAtMaxLevel"][classId] or 0) + 1
+        end
+    end
+
     -- TODO: 公会成员信息
     -- P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm, guildFaction)
 end
