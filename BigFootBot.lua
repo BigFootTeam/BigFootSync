@@ -73,6 +73,7 @@ end
 ---------------------------------------------------------------------
 -- 重载后/登出时，FIXME: 无法在此事件中获取数据
 ---------------------------------------------------------------------
+--[[
 function frame:PLAYER_LOGOUT()
     -- 保存玩家自己的信息到角色配置
     P.SavePlayerData(BigFootBotPlayerDB)
@@ -83,6 +84,7 @@ function frame:PLAYER_LOGOUT()
     -- 保存成就信息
     -- A.SaveAchievements(BigFootBotAchievementDB) -- 会增加下线/重载前的卡顿时间
 end
+]]
 
 ---------------------------------------------------------------------
 -- 重载后/登入时
@@ -97,7 +99,7 @@ function frame:PLAYER_LOGIN()
     -- 保存玩家自己的信息到角色配置
     P.SavePlayerData(BigFootBotPlayerDB)
 
-    -- 保存玩家自己的基础信息到账号配置
+    -- 保存玩家自己的基础信息到账号配置（所有收集到的玩家数据）
     P.SaveUnitBaseData(BigFootBotCharacterDB, "player", true)
 
     -- 保存成就信息
@@ -163,8 +165,8 @@ function frame:GUILD_ROSTER_UPDATE()
         BigFootBotGuildDB["levels"][level] = (BigFootBotGuildDB["levels"][level] or 0) + 1
 
         -- 满级职业分布
-        local classId = U.GetClassID(classFile)
         if level == maxLevel then
+            local classId = U.GetClassID(classFile)
             BigFootBotGuildDB["classesAtMaxLevel"][classId] = (BigFootBotGuildDB["classesAtMaxLevel"][classId] or 0) + 1
         end
     end
@@ -190,10 +192,11 @@ function frame:GROUP_ROSTER_UPDATE(immediate)
             return
         end
         frame.updateGroupRosterRequired = nil
+        frame:UnregisterEvent("GROUP_ROSTER_UPDATE") -- 成功记录一次之后不再记录
         P.SaveGroupMemberData(BigFootBotCharacterDB)
 
-    else -- 10秒内队伍成员没变化才进行遍历操作
-        timer = C_Timer.NewTimer(10, function()
+    else -- 5秒内队伍成员没变化才进行遍历操作
+        timer = C_Timer.NewTimer(5, function()
             timer = nil
             frame:GROUP_ROSTER_UPDATE(true)
         end)
