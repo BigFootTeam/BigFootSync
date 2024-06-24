@@ -17,10 +17,10 @@ function U.GetBigFootClientVersion(wowProjectID)
         return 0
     elseif wowProjectID == WOW_PROJECT_CLASSIC then
         return 1
-    elseif wowProjectID == WOW_PROJECT_CATACLYSM_CLASSIC then
-        return 2
     elseif wowProjectID == WOW_PROJECT_WRATH_CLASSIC then
         return 3
+    else
+        return 2
     end
 end
 
