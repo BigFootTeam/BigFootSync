@@ -30,7 +30,7 @@ function frame:ADDON_LOADED(arg)
 
         -- 账号相关信息（每次上线清空）
         BigFootBotAccountDB = {
-            ["fullName"] = U.UnitFullName("player"),
+            ["fullName"] = U.UnitName("player"),
             ["region"] = GetCVar("portal"), -- 区域
             ["isTrial"] = IsTrialAccount(), -- 是否为试玩账号
             ["gameVersion"] = GetBuildInfo(), -- 当前账号配置对应的版本号，例如 10.2.7
@@ -61,7 +61,7 @@ function frame:ADDON_LOADED(arg)
             ["talents"] = {}, -- 天赋
         }
 
-        -- frame:RegisterEvent("PLAYER_LOGOUT")
+        frame:RegisterEvent("PLAYER_LOGOUT")
         frame:RegisterEvent("PLAYER_LOGIN")
         frame:RegisterEvent("GROUP_ROSTER_UPDATE")
         frame:RegisterEvent("GUILD_ROSTER_UPDATE")
@@ -71,20 +71,30 @@ function frame:ADDON_LOADED(arg)
 end
 
 ---------------------------------------------------------------------
--- 重载后/登出时，FIXME: 无法在此事件中获取数据
+-- 重载后/登出时（文件保存前）
 ---------------------------------------------------------------------
---[[
 function frame:PLAYER_LOGOUT()
+    local indices = {"guid", "name", "realm", "level", "gender", "raceId", "classId", "faction", "region", "version"}
+    for k, t in pairs(BigFootBotCharacterDB) do
+        for _, index in pairs(indices) do
+            -- 对应属性为空，空字符串，或者为0（非version属性）时，丢弃此条数据
+            if not t[index] or t[index] == "" or (index ~= "version" and t[index] == 0) then
+                BigFootBotCharacterDB[k] = nil
+                break
+            end
+        end
+    end
+
+    -- FIXME: 无法在此事件中获取数据
     -- 保存玩家自己的信息到角色配置
-    P.SavePlayerData(BigFootBotPlayerDB)
+    -- P.SavePlayerData(BigFootBotPlayerDB)
 
     -- 保存玩家自己的基础信息到账号配置
-    P.SaveUnitBaseData(BigFootBotCharacterDB, "player", true)
+    -- P.SaveUnitBaseData(BigFootBotCharacterDB, "player", true)
 
     -- 保存成就信息
     -- A.SaveAchievements(BigFootBotAchievementDB) -- 会增加下线/重载前的卡顿时间
 end
-]]
 
 ---------------------------------------------------------------------
 -- 重载后/登入时
@@ -171,7 +181,7 @@ function frame:GUILD_ROSTER_UPDATE()
         end
     end
 
-    -- TODO: 公会成员信息
+    -- 公会成员信息
     -- P.SaveGuildMemberData(BigFootBotCharacterDB, guildName, guildRealm, guildFaction)
 end
 

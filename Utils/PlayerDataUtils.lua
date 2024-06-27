@@ -11,7 +11,8 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     if not UnitIsPlayer(unit) then return end
 
     -- 全名
-    local fullName = U.UnitFullName(unit)
+    local fullName, name, realm = U.UnitName(unit)
+    if not (fullName and name and realm) then return end
 
     -- 对于所有玩家的数据保存，以全名为索引
     if useFullNameAsIndex then
@@ -25,11 +26,10 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
 
     -- guid（可能发生变化）
     t["guid"] = UnitGUID(unit)
-    -- 名字、服务器
-    t["name"], t["realm"] = UnitNameUnmodified(unit)
-    if not t["realm"] then
-        t["realm"] = GetNormalizedRealmName()
-    end
+    -- 名字（短）
+    t["name"] = name
+    -- 服务器（normalized）
+    t["realm"] = realm
     -- 等级
     t["level"] = UnitLevel(unit)
     -- 性别

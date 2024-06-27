@@ -61,21 +61,19 @@ function U.GetClassID(class)
 end
 
 ---------------------------------------------------------------------
--- UnitFullName
+-- UnitName
 ---------------------------------------------------------------------
-function U.UnitFullName(unit)
+function U.UnitName(unit)
     if not unit or not UnitIsPlayer(unit) then return end
 
-    local name = GetUnitName(unit, true)
+    local name, realm = UnitNameUnmodified(unit)
+    if not name or name == "" then return end
 
-    if name and not string.find(name, "-") then -- 同服角色不带服务器名
-        local realm = GetNormalizedRealmName() -- 不可使用 GetRealmName()，其中可能包含空格或短横线
-        if realm then
-            name = name.."-"..realm
-        end
-    end
+    -- 同服角色不带服务器名，不可使用 GetRealmName()，其中可能包含空格或短横线
+    if not realm then realm = GetNormalizedRealmName() end
+    if not realm or realm == "" then return end
 
-    return name
+    return name.."-"..realm, name, realm
 end
 
 ---------------------------------------------------------------------
