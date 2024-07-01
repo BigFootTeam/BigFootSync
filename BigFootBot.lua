@@ -22,8 +22,8 @@ function frame:ADDON_LOADED(arg)
     if arg == addonName then
         frame:UnregisterEvent("ADDON_LOADED")
 
-        -- 保存服务器ID、名称
-        if type(BigFootBotRealmDB) ~= "table" then BigFootBotRealmDB = {} end
+        -- 保存服务器ID、名称（每次上线清空）
+        BigFootBotRealmDB = {}
 
         -- 所有玩家的数据（每次上线清空）
         BigFootBotCharacterDB = {}
@@ -101,9 +101,11 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
     -- 保存服务器信息
-    BigFootBotRealmDB[GetRealmID()] = {
-        ["name"] = GetRealmName(),
-        ["normalizedName"] = GetNormalizedRealmName(),
+    BigFootBotRealmDB = {
+        ["id"] = GetRealmID(), -- 服务器ID
+        ["name"] = GetRealmName(), -- 服务器名
+        ["normalizedName"] = GetNormalizedRealmName(), -- 服务器名（去除空格等符号，外服常见）
+        ["region"] = GetCVar("portal"), -- 区域
     }
 
     -- 保存玩家自己的信息到角色配置
