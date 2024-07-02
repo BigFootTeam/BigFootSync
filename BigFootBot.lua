@@ -174,11 +174,12 @@ function frame:GUILD_ROSTER_UPDATE()
         end
 
         -- 等级分布
-        BigFootBotGuildDB["levels"][level] = (BigFootBotGuildDB["levels"][level] or 0) + 1
+        local k = tostring(level) -- 只要有数字索引1的，不连续的索引会被补nil，且不保持k=v格式
+        BigFootBotGuildDB["levels"][k] = (BigFootBotGuildDB["levels"][k] or 0) + 1
 
         -- 满级职业分布
         if level == maxLevel then
-            local classId = U.GetClassID(classFile)
+            local classId = tostring(U.GetClassID(classFile)) -- 同 level
             BigFootBotGuildDB["classesAtMaxLevel"][classId] = (BigFootBotGuildDB["classesAtMaxLevel"][classId] or 0) + 1
         end
     end
