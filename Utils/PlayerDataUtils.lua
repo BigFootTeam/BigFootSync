@@ -47,7 +47,7 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     -- 游戏版本（为了客户端读取方便）
     t["version"] = U.GetBigFootClientVersion()
     -- 更新时间
-    t["lastSeen"] = time()
+    t["lastSeen"] = GetServerTime()
 end
 
 
@@ -413,7 +413,7 @@ function P.SaveGuildMemberData(t, guildName, guildRealm, guildFaction)
         t[name]["faction"] = guildFaction -- 默认为公会阵营
         t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
         t[name]["version"] = U.GetBigFootClientVersion() -- 游戏版本（为了客户端读取方便）
-        t[name]["lastSeen"] = time() -- 更新时间
+        t[name]["lastSeen"] = GetServerTime() -- 更新时间
     end
 end
 
@@ -449,7 +449,7 @@ function P.SaveFriendData(t)
         t[info.name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
         t[info.name]["faction"] = UnitFactionGroup("player") -- 游戏好友，阵营与玩家一致
         t[info.name]["version"] = U.GetBigFootClientVersion() -- 游戏版本（为了客户端读取方便）
-        t[info.name]["lastSeen"] = time() -- 更新时间
+        t[info.name]["lastSeen"] = GetServerTime() -- 更新时间
     end
 end
 
@@ -479,7 +479,7 @@ function P.SaveBNetFriendData(t, realmDataTable)
                 t[name]["realm"] = info.realmDisplayName
                 t[name]["faction"] = info.factionName
                 t[name]["classId"] = U.GetClassID(info.className)
-                t[name]["lastSeen"] = time() -- 更新时间
+                t[name]["lastSeen"] = GetServerTime() -- 更新时间
                 -- info.raceName: 本地化后的种族名
 
                 -- 补充服务器信息
