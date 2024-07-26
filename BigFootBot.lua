@@ -67,6 +67,7 @@ function frame:ADDON_LOADED(arg)
         frame:RegisterEvent("GUILD_ROSTER_UPDATE")
         frame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
         frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+        frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     end
 end
 
@@ -123,13 +124,20 @@ function frame:PLAYER_LOGIN()
     -- P.SaveFriendData(BigFootBotCharacterDB)
     -- P.SaveBNetFriendData(BigFootBotCharacterDB, BigFootBotRealmDB)
 
+    -- 请求公会数据
+    C_GuildInfo.GuildRoster()
+end
+
+---------------------------------------------------------------------
+-- 进入世界
+---------------------------------------------------------------------
+function frame:PLAYER_ENTERING_WORLD()
+    frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+
     -- 已经在队伍中
     if IsInGroup() then
         frame:GROUP_ROSTER_UPDATE()
     end
-
-    -- 请求公会数据
-    C_GuildInfo.GuildRoster()
 end
 
 ---------------------------------------------------------------------
