@@ -27,8 +27,13 @@ end
 ---------------------------------------------------------------------
 -- GetClassID
 ---------------------------------------------------------------------
-local localizedClass = {}
-FillLocalizedClassList(localizedClass)
+local localizedClass
+if FillLocalizedClassList then
+    localizedClass = {}
+    FillLocalizedClassList(localizedClass)
+else
+    localizedClass = LocalizedClassList()
+end
 
 local classFileToID = {}
 local localizedClassToID = {}
