@@ -4,7 +4,8 @@ BigFootBot.token = {}
 local T = BigFootBot.token
 local U = BigFootBot.utils
 
-local UPDATE_INTERVAL = 30 * 60
+local TIME_POINTS = {15, 35, 55} -- 获取数据的时间点
+local UPDATE_INTERVAL = 20 * 60 -- 更新间隔（秒）
 
 ---------------------------------------------------------------------
 -- 保存数据
@@ -42,18 +43,19 @@ end
 ---------------------------------------------------------------------
 function T:StartTockenPriceUpdater()
     local t = date("*t", GetServerTime())
-    if t.min == 0 or t.min == 30 then
-        StartNow()
-    elseif t.min < 30 then
-        StartDelayed((30 - t.min) * 60 + t.sec)
+
+    if t.min > TIME_POINTS[#TIME_POINTS] then
+        -- 大于最后一个时间点
+        StartDelayed((60 - t.min) * 60 + t.sec + TIME_POINTS[1] * 60)
     else
-        StartDelayed((60 - t.min) * 60 + t.sec)
+        for _, v in pairs(TIME_POINTS) do
+            if t.min == v then
+                StartNow()
+                break
+            elseif t.min < v then
+                StartDelayed((v - t.min) * 60 + t.sec)
+                break
+            end
+        end
     end
-    -- if t.sec == 0 or t.sec == 30 then
-    --     StartNow()
-    -- elseif t.sec < 30 then
-    --     StartDelayed(30 - t.sec)
-    -- else
-    --     StartDelayed(60 - t.sec)
-    -- end
 end
