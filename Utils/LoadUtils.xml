@@ -3,4 +3,5 @@
     <Script file="Utils.lua"/>
     <Script file="PlayerDataUtils.lua"/>
     <Script file="AchievementDataUtils.lua"/>
+    <Script file="WoWTokenUtils.lua"/>
 </Ui>

@@ -4,6 +4,7 @@ _G.BigFootBot = BigFootBot
 local P = BigFootBot.players
 local A = BigFootBot.achievements
 local U = BigFootBot.utils
+local T = BigFootBot.token
 
 ---------------------------------------------------------------------
 -- events
@@ -60,6 +61,10 @@ function frame:ADDON_LOADED(arg)
             ["equipments"] = {}, -- 装备
             ["talents"] = {}, -- 天赋
         }
+
+        -- 时光徽章数据（每次上线清空）
+        BigFootBotTokenDB = {}
+        T:StartTockenPriceUpdater()
 
         frame:RegisterEvent("PLAYER_LOGOUT")
         frame:RegisterEvent("PLAYER_LOGIN")
