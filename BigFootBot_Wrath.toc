@@ -1,5 +1,5 @@
 ﻿## Interface: 30403
-## Version: r3
+## Version: r4
 ## Title: [BF] BigFootBot
 ## Title-zhCN: [大脚]数据分析
 ## Title-zhTW: [大腳]數據分析
