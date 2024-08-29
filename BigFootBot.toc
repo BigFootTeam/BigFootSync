@@ -1,5 +1,5 @@
 ﻿## Interface: 110000,110002
-## Version: r4
+## Version: r5
 ## Title: [BF] BigFootBot
 ## Title-zhCN: [大脚]数据分析
 ## Title-zhTW: [大腳]數據分析

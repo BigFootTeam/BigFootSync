@@ -73,6 +73,7 @@ function frame:ADDON_LOADED(arg)
         frame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
         frame:RegisterEvent("PLAYER_TARGET_CHANGED")
         frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        frame:RegisterEvent("INSPECT_READY")
     end
 end
 
@@ -245,11 +246,46 @@ function frame:PLAYER_REGEN_ENABLED()
 end
 
 ---------------------------------------------------------------------
+-- INSPECT_READY
+---------------------------------------------------------------------
+local GUIDS = {}
+
+local function RequestUnitItemLevel(unit)
+    -- print("RequestUnitItemLevel", CanInspect(unit), CheckInteractDistance(unit, 4))
+    if UnitIsUnit(unit, "player") then return end
+    local level = UnitLevel(unit)
+    if level == U.GetMaxLevel() and CanInspect(unit) and (BigFootBot.isRetail or CheckInteractDistance(unit, 4)) then
+        local guid = UnitGUID(unit)
+        if guid and P.ShouldUpdateUnitItemLevel(guid) then
+            local fullName = U.UnitName(unit)
+            -- print("REQUEST", unit, guid, fullName)
+            GUIDS[guid] = unit
+            NotifyInspect(unit)
+        end
+    end
+end
+
+function frame:INSPECT_READY(guid)
+    if InCombatLockdown() then return end
+    local unit = GUIDS[guid]
+    if unit then
+        GUIDS[guid] = nil
+        local fullName = U.UnitName(unit)
+        local correct_guid = UnitGUID(unit)
+        if correct_guid == guid and BigFootBotCharacterDB[fullName] then
+            -- print("INSPECT_READY", unit, guid, fullName)
+            P.SaveUnitItemLevel(BigFootBotCharacterDB[fullName], unit, guid)
+        end
+    end
+end
+
+---------------------------------------------------------------------
 -- 鼠标指向
 ---------------------------------------------------------------------
 function frame:UPDATE_MOUSEOVER_UNIT()
     if InCombatLockdown() then return end
     P.SaveUnitBaseData(BigFootBotCharacterDB, "mouseover", true)
+    RequestUnitItemLevel("mouseover")
 end
 
 ---------------------------------------------------------------------
@@ -258,4 +294,5 @@ end
 function frame:PLAYER_TARGET_CHANGED()
     if InCombatLockdown() then return end
     P.SaveUnitBaseData(BigFootBotCharacterDB, "target", true)
+    RequestUnitItemLevel("target")
 end

@@ -66,6 +66,21 @@ function U.GetClassID(class)
 end
 
 ---------------------------------------------------------------------
+-- MaxLevel
+---------------------------------------------------------------------
+function U.GetMaxLevel()
+    if BigFootBot.isCata then
+        return 85
+    elseif BigFootBot.isWrath then
+        return 80
+    elseif BigFootBot.isVanilla then
+        return 60
+    else
+        return GetMaxLevelForLatestExpansion()
+    end
+end
+
+---------------------------------------------------------------------
 -- UnitName
 ---------------------------------------------------------------------
 function U.UnitName(unit)
