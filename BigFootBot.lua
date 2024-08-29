@@ -251,8 +251,10 @@ end
 local GUIDS = {}
 
 local function RequestUnitItemLevel(unit)
-    -- print("RequestUnitItemLevel", CanInspect(unit), CheckInteractDistance(unit, 4))
-    if UnitIsUnit(unit, "player") then return end
+    if (InspectFrame and InspectFrame:IsShown()) or (CharacterFrame and CharacterFrame:IsShown()) or UnitIsUnit(unit, "player") then
+        return
+    end
+
     local level = UnitLevel(unit)
     if level == U.GetMaxLevel() and CanInspect(unit) and (BigFootBot.isRetail or CheckInteractDistance(unit, 4)) then
         local guid = UnitGUID(unit)

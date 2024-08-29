@@ -342,8 +342,8 @@ if BigFootBot.isRetail then
     local ITEM_LEVEL_PATTERN = ITEM_LEVEL:gsub("%%d", "(%%d+)")
     local ITEM_LEVEL_ALT_PATTERN = ITEM_LEVEL_ALT:gsub("%%d %(%%d%)", "%%d+ %%((%%d+)%%)")
 
-    local scanner = CreateFrame("GameTooltip", "BigFootScanner", UIParent, "GameTooltipTemplate")
     local GetTooltipData = C_TooltipInfo and C_TooltipInfo.GetInventoryItem
+    -- local scanner = CreateFrame("GameTooltip", "BigFootScanner", UIParent, "GameTooltipTemplate")
     -- if not GetTooltipData then
     --     GetTooltipData = function(unit, slot)
     --         scanner:SetOwner(UIParent, "ANCHOR_NONE")
@@ -396,7 +396,6 @@ if BigFootBot.isRetail then
         for _, slot in pairs(SLOTS) do
             slotData[guid][slot] = GetTooltipData(unit, slot)
         end
-        scanner:Hide()
 
         C_Timer.After(0.1, function()
             local mainLevel = GetSlotLevel(slotData[guid][INVSLOT_MAINHAND])
