@@ -342,7 +342,7 @@ if BigFootBot.isRetail then
     local ITEM_LEVEL_PATTERN = ITEM_LEVEL:gsub("%%d", "(%%d+)")
     local ITEM_LEVEL_ALT_PATTERN = ITEM_LEVEL_ALT:gsub("%%d %(%%d%)", "%%d+ %%((%%d+)%%)")
 
-    local GetTooltipData = C_TooltipInfo and C_TooltipInfo.GetInventoryItem
+    local GetTooltipData = C_TooltipInfo.GetInventoryItem
     -- local scanner = CreateFrame("GameTooltip", "BigFootScanner", UIParent, "GameTooltipTemplate")
     -- if not GetTooltipData then
     --     GetTooltipData = function(unit, slot)
