@@ -426,7 +426,7 @@ if BigFootBot.isRetail then
                     end
                 end
 
-                if total then
+                if total and total ~= 0 then
                     t["itemLevel"] = max(Round(total / NUM_SLOTS), 1)
                     cached[guid] = GetTime()
                     -- print(t["itemLevel"])
