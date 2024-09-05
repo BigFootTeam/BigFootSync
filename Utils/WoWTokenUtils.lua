@@ -30,6 +30,7 @@ end
 local timestamp
 
 local function SaveTokenPrice()
+    if not timestamp then return end
     local price = C_WowTokenPublic.GetCurrentMarketPrice()
     if token_debug_print then
         print("UPDATE:", "[" .. timestamp .. "] = " .. price)
