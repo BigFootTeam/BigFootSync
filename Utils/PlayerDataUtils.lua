@@ -43,7 +43,7 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     -- 公会
     t["guild"] = GetGuildInfo(unit)
     -- 地区（为了客户端读取方便）
-    t["region"] = BigFootSyncAccountDB["region"]
+    t["region"] = BFS_Account["region"]
     -- 游戏版本（为了客户端读取方便）
     t["version"] = U.GetBigFootClientVersion()
     -- 更新时间
@@ -57,32 +57,9 @@ end
 
 
 ---------------------------------------------------------------------
--- 保存玩家自己的基础信息
----------------------------------------------------------------------
-local function SavePlayerBaseData(t)
-    P.SaveUnitBaseData(t, "player")
-
-    -- 头衔
-    t["titleId"] = GetCurrentTitle()
-    -- if t["titleId"] ~= -1 then
-    --     t["titleName"] = GetTitleName(t["titleId"])
-    -- end
-
-    -- 装等
-    t["avgItemLevel"], t["avgItemLevelEquipped"] = GetAverageItemLevel()
-
-    if BigFootSync.isRetail then
-        -- 专精，无法从 GetSpecializationInfo(GetSpecialization()) 获取，原因未知
-        -- t["specId"] = GetSpecializationInfoForClassID(t["classId"], GetSpecialization())
-        t["specId"] = GetSpecializationInfo(GetSpecialization())
-    end
-end
-
-
----------------------------------------------------------------------
 -- 保存玩家自己的属性信息
 ---------------------------------------------------------------------
-local function SavePlayerStatData(t)
+function P.SavePlayerStatData(t)
     -- 主属性
     local stats = {"strength", "agility", "stamina", "intellect"}
     if not BigFootSync.isRetail then tinsert(stats, "spirit") end
@@ -294,7 +271,7 @@ end
 
 -- TODO: function P.SaveUnitEquipmentData(unit, t)
 
-local function SavePlayerEquipmentData(t)
+function P.SavePlayerEquipmentData(t)
     for k, id in pairs(INV_SLOTS) do
         -- local link = GetInventoryItemLink("player", id)
         -- print(string.gsub(link, "\124", "\124\124"))
@@ -302,6 +279,7 @@ local function SavePlayerEquipmentData(t)
         t[k] = GetInventoryItemLink("player", id) or ""
     end
 end
+
 
 ---------------------------------------------------------------------
 -- 平均装等
@@ -510,8 +488,6 @@ end
 ---------------------------------------------------------------------
 -- 保存玩家自己的天赋信息
 ---------------------------------------------------------------------
-local SavePlayerTalents
-
 if BigFootSync.isRetail then
     local function SaveTalentsByConfigID(t, configId)
         local configInfo = C_Traits.GetConfigInfo(configId)
@@ -529,7 +505,7 @@ if BigFootSync.isRetail then
         end
     end
 
-    SavePlayerTalents = function(t)
+    P.SavePlayerTalents = function(t)
         wipe(t)
 
         local configId = C_ClassTalents.GetActiveConfigID()
@@ -553,7 +529,7 @@ if BigFootSync.isRetail then
         -- end
     end
 else
-    SavePlayerTalents = function(t)
+    P.SavePlayerTalents = function(t)
         -- 仅保存当前天赋配置
         for tabIndex = 1, GetNumTalentTabs() do
             -- 每个“专精”单独存放
@@ -576,16 +552,6 @@ else
     end
 end
 
----------------------------------------------------------------------
--- 保存玩家自己的数据
----------------------------------------------------------------------
-function P.SavePlayerData(t)
-    SavePlayerBaseData(t["base"])
-    SavePlayerStatData(t["stats"])
-    SavePlayerCombatRatingData(t)
-    SavePlayerEquipmentData(t["equipments"])
-    SavePlayerTalents(t["talents"])
-end
 
 ---------------------------------------------------------------------
 -- 保存队内玩家数据
@@ -595,6 +561,7 @@ function P.SaveGroupMemberData(t)
         P.SaveUnitBaseData(t, unit, true)
     end
 end
+
 
 ---------------------------------------------------------------------
 -- 保存公会玩家数据
@@ -614,11 +581,12 @@ function P.SaveGuildMemberData(t, guildName, guildRealm, guildFaction)
         t[name]["guild"] = guildName
         t[name]["realm"] = guildRealm -- 默认为公会服务器
         t[name]["faction"] = guildFaction -- 默认为公会阵营
-        t[name]["region"] = BigFootSyncAccountDB["region"] -- 地区（为了客户端读取方便）
+        t[name]["region"] = BFS_Account["region"] -- 地区（为了客户端读取方便）
         t[name]["version"] = U.GetBigFootClientVersion() -- 游戏版本（为了客户端读取方便）
         t[name]["lastSeen"] = GetServerTime() -- 更新时间
     end
 end
+
 
 ---------------------------------------------------------------------
 -- 保存好友数据
@@ -649,7 +617,7 @@ function P.SaveFriendData(t)
         if info.className ~= _G.UNKNOWN then
             t[info.name]["classId"] = U.GetClassID(info.className)
         end
-        t[info.name]["region"] = BigFootSyncAccountDB["region"] -- 地区（为了客户端读取方便）
+        t[info.name]["region"] = BFS_Account["region"] -- 地区（为了客户端读取方便）
         t[info.name]["faction"] = UnitFactionGroup("player") -- 游戏好友，阵营与玩家一致
         t[info.name]["version"] = U.GetBigFootClientVersion() -- 游戏版本（为了客户端读取方便）
         t[info.name]["lastSeen"] = GetServerTime() -- 更新时间
@@ -693,7 +661,7 @@ function P.SaveBNetFriendData(t, realmDataTable)
                     }
                 end
 
-                t[name]["region"] = BigFootSyncAccountDB["region"] -- 地区（为了客户端读取方便）
+                t[name]["region"] = BFS_Account["region"] -- 地区（为了客户端读取方便）
                 t[name]["version"] = version -- 游戏版本（为了客户端读取方便）
             end
         end

@@ -35,7 +35,7 @@ local function SaveTokenPrice()
     if token_debug_print then
         print("UPDATE:", "[" .. timestamp .. "] = " .. price)
     end
-    BigFootSyncTokenDB[timestamp] = price
+    BFS_Token[timestamp] = price
     timestamp = nil
 end
 

@@ -23,14 +23,14 @@ function frame:ADDON_LOADED(arg)
     if arg == addonName then
         frame:UnregisterEvent("ADDON_LOADED")
 
-        -- 保存服务器ID、名称（每次上线清空）
-        BigFootSyncRealmDB = {}
+        -- 保存玩家自己的服务器ID、名称（每次上线清空）
+        BFS_Realm = {} -- BigFootSyncRealmDB
 
         -- 所有玩家的数据（每次上线清空）
-        BigFootSyncCharacterDB = {}
+        BFS_Characters = {} -- BigFootSyncCharacterDB
 
         -- 账号相关信息（每次上线清空）
-        BigFootSyncAccountDB = {
+        BFS_Account = { -- BigFootSyncAccountDB
             ["fullName"] = U.UnitName("player"),
             ["region"] = GetCVar("portal"), -- 区域
             ["isTrial"] = IsTrialAccount(), -- 是否为试玩账号
@@ -38,73 +38,24 @@ function frame:ADDON_LOADED(arg)
             ["clientVersion"] = U.GetBigFootClientVersion(), -- 对应大脚客户端内游戏版本ID
             ["addonVersion"] = C_AddOns.GetAddOnMetadata(addonName, "Version"), -- 插件版本
             ["bigfootVersion"] = BIGFOOT_VERSION,
-            ["mounts"] = "",
-            ["specId"] = 65,
-            ["titleId"] = 95,
+            ["specId"] = 0,
+            ["titleId"] = 0,
             ["equipments"] = {},
             ["stats"] = {},
             ["talents"] = {},
+            ["mounts"] = "",
+            ["pets"] = {},
+            ["achievements"] = {},
         }
 
         -- 玩家自己的公会信息（每次上线清空）
-        BigFootSyncGuildDB = {}
-
-        -- 账号成就（每次上线清空）
-        BigFootSyncAchievementDB = {}
-
-        -- 账号宠物（每次上线清空）
-        -- BigFootSyncPetDB = {}
-
-        -- 账号坐骑（每次上线清空）
-        -- BigFootMountDB = {}
-
-        -- 玩家自己的数据（每次上线清空）
-        BigFootSyncPlayerDB = {
-            [fullName] = {
-                ["base"] = {}, -- 基础属性
-                ["stats"] = {}, -- 战斗属性
-                ["combatRating"] = {},
-                ["combatRatingBonus"] = {},
-                ["equipments"] = {}, -- 装备
-                ["talents"] = {}, -- 天赋
-            }
-            [fullName] = {
-                ["base"] = {}, -- 基础属性
-                ["stats"] = {}, -- 战斗属性
-                ["combatRating"] = {},
-                ["combatRatingBonus"] = {},
-                ["equipments"] = {}, -- 装备
-                ["talents"] = {}, -- 天赋
-            }
-            [fullName] = {
-                ["base"] = {}, -- 基础属性
-                ["stats"] = {}, -- 战斗属性
-                ["combatRating"] = {},
-                ["combatRatingBonus"] = {},
-                ["equipments"] = {}, -- 装备
-                ["talents"] = {}, -- 天赋
-            }
-            [fullName] = {
-                ["base"] = {}, -- 基础属性
-                ["stats"] = {}, -- 战斗属性
-                ["combatRating"] = {},
-                ["combatRatingBonus"] = {},
-                ["equipments"] = {}, -- 装备
-                ["talents"] = {}, -- 天赋
-            }
-            [fullName] = {
-                ["base"] = {}, -- 基础属性
-                ["stats"] = {}, -- 战斗属性
-                ["combatRating"] = {},
-                ["combatRatingBonus"] = {},
-                ["equipments"] = {}, -- 装备
-                ["talents"] = {}, -- 天赋
-            }
-        }
+        BFS_Guild = {} -- BigFootSyncGuildDB
 
         -- 时光徽章数据（每次上线清空）
-        BigFootSyncTokenDB = {}
-        T:StartTockenPriceUpdater()
+        BFS_Token = {} -- BigFootSyncTokenDB
+        if not BigFootSync.isVanilla then
+            T:StartTockenPriceUpdater()
+        end
 
         frame:RegisterEvent("PLAYER_LOGOUT")
         frame:RegisterEvent("PLAYER_LOGIN")
@@ -122,11 +73,11 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGOUT()
     local indices = {"guid", "name", "realm", "level", "gender", "raceId", "classId", "faction", "region", "version"}
-    for k, t in pairs(BigFootSyncCharacterDB) do
+    for k, t in pairs(BFS_Characters) do
         for _, index in pairs(indices) do
             -- 对应属性为空，空字符串，或者为0（非version属性）时，丢弃此条数据
             if not t[index] or t[index] == "" or (index ~= "version" and t[index] == 0) then
-                BigFootSyncCharacterDB[k] = nil
+                BFS_Characters[k] = nil
                 break
             end
         end
@@ -134,13 +85,10 @@ function frame:PLAYER_LOGOUT()
 
     -- FIXME: 无法在此事件中获取数据
     -- 保存玩家自己的信息到角色配置
-    -- P.SavePlayerData(BigFootSyncPlayerDB)
-
-    -- 保存玩家自己的基础信息到账号配置
-    -- P.SaveUnitBaseData(BigFootSyncCharacterDB, "player", true)
+    -- P.SavePlayerData()
 
     -- 保存成就信息
-    -- A.SaveAchievements(BigFootSyncAchievementDB) -- 会增加下线/重载前的卡顿时间
+    -- A.SaveAchievements() -- 会增加下线/重载前的卡顿时间
 end
 
 ---------------------------------------------------------------------
@@ -148,27 +96,37 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
     -- 保存服务器信息
-    BigFootSyncRealmDB = {
+    BFS_Realm = {
         ["id"] = GetRealmID(), -- 服务器ID
         ["name"] = GetRealmName(), -- 服务器名
         ["normalizedName"] = GetNormalizedRealmName(), -- 服务器名（去除空格等符号，外服常见）
         ["region"] = GetCVar("portal"), -- 区域
     }
 
-    -- 保存玩家自己的信息到角色配置
-    P.SavePlayerData(BigFootSyncPlayerDB)
+    -- 保存玩家自己的基础信息到 BFS_Characters（所有收集到的玩家数据）
+    P.SaveUnitBaseData(BFS_Characters, "player", true)
 
-    -- 保存玩家自己的基础信息到账号配置（所有收集到的玩家数据）
-    P.SaveUnitBaseData(BigFootSyncCharacterDB, "player", true)
-
-    -- 保存成就信息
-    if not BigFootSync.isVanilla then
-        A.SaveAchievements(BigFootSyncAchievementDB)
+    -- 保存玩家自己的部分基础信息到 BFS_Account
+    if BigFootSync.isRetail then
+        -- 专精，无法从 GetSpecializationInfo(GetSpecialization()) 获取，原因未知
+        -- t["specId"] = GetSpecializationInfoForClassID(t["classId"], GetSpecialization())
+        BFS_Account["specId"] = GetSpecializationInfo(GetSpecialization())
     end
+    BFS_Account["titleId"] = GetCurrentTitle()
+    BFS_Account["avgItemLevel"], BFS_Account["avgItemLevelEquipped"] = GetAverageItemLevel()
+
+    -- 成就
+    A.SaveAchievements(BFS_Account["achievements"])
+    -- 天赋
+    P.SavePlayerTalents(BFS_Account["talents"])
+    -- 装备
+    P.SavePlayerEquipmentData(BFS_Account["equipments"])
+    -- 属性
+    P.SavePlayerStatData(BFS_Account["stats"])
 
     -- 保存好友信息
-    -- P.SaveFriendData(BigFootSyncCharacterDB)
-    -- P.SaveBNetFriendData(BigFootSyncCharacterDB, BigFootSyncRealmDB)
+    -- P.SaveFriendData(BFS_Characters)
+    -- P.SaveBNetFriendData(BFS_Characters, BFS_Realm)
 
     -- 请求公会数据
     C_GuildInfo.GuildRoster()
@@ -207,39 +165,39 @@ function frame:GUILD_ROSTER_UPDATE()
     local guildFaction = GetGuildFactionGroup() == 0 and "Horde" or "Alliance"
 
     -- 公会信息
-    BigFootSyncGuildDB["name"] = guildName
-    BigFootSyncGuildDB["members"] = GetNumGuildMembers()
-    BigFootSyncGuildDB["realm"] = guildRealm
-    BigFootSyncGuildDB["faction"] = guildFaction
-    BigFootSyncGuildDB["region"] = BigFootSyncAccountDB["region"]
+    BFS_Guild["name"] = guildName
+    BFS_Guild["members"] = GetNumGuildMembers()
+    BFS_Guild["realm"] = guildRealm
+    BFS_Guild["faction"] = guildFaction
+    BFS_Guild["region"] = BFS_Account["region"]
 
     -- 公会在线人数/等级/职业分布
-    BigFootSyncGuildDB["online"] = 0
-    BigFootSyncGuildDB["levels"] = {}
-    BigFootSyncGuildDB["classesAtMaxLevel"] = {}
+    BFS_Guild["online"] = 0
+    BFS_Guild["levels"] = {}
+    BFS_Guild["classesAtMaxLevel"] = {}
 
     -- NOTE: 怀旧服没有 GetMaxLevelForLatestExpansion
     local maxLevel = GetMaxLevelForExpansionLevel(LE_EXPANSION_LEVEL_CURRENT)
 
-    for i = 1, BigFootSyncGuildDB["members"] do
+    for i = 1, BFS_Guild["members"] do
         local name, _, _, level, _, _, _, _, isOnline, _, classFile = GetGuildRosterInfo(i)
         if isOnline then
-            BigFootSyncGuildDB["online"] = BigFootSyncGuildDB["online"] + 1
+            BFS_Guild["online"] = BFS_Guild["online"] + 1
         end
 
         -- 等级分布
         local k = tostring(level) -- 只要有数字索引1的，不连续的索引会被补nil，且不保持k=v格式
-        BigFootSyncGuildDB["levels"][k] = (BigFootSyncGuildDB["levels"][k] or 0) + 1
+        BFS_Guild["levels"][k] = (BFS_Guild["levels"][k] or 0) + 1
 
         -- 满级职业分布
         if level == maxLevel then
             local classId = tostring(U.GetClassID(classFile)) -- 同 level
-            BigFootSyncGuildDB["classesAtMaxLevel"][classId] = (BigFootSyncGuildDB["classesAtMaxLevel"][classId] or 0) + 1
+            BFS_Guild["classesAtMaxLevel"][classId] = (BFS_Guild["classesAtMaxLevel"][classId] or 0) + 1
         end
     end
 
     -- 公会成员信息
-    -- P.SaveGuildMemberData(BigFootSyncCharacterDB, guildName, guildRealm, guildFaction)
+    -- P.SaveGuildMemberData(BFS_Characters, guildName, guildRealm, guildFaction)
 end
 
 ---------------------------------------------------------------------
@@ -260,7 +218,7 @@ function frame:GROUP_ROSTER_UPDATE(immediate)
         end
         frame.updateGroupRosterRequired = nil
         frame:UnregisterEvent("GROUP_ROSTER_UPDATE") -- 成功记录一次之后不再记录
-        P.SaveGroupMemberData(BigFootSyncCharacterDB)
+        P.SaveGroupMemberData(BFS_Characters)
 
     else -- 5秒内队伍成员没变化才进行遍历操作
         timer = C_Timer.NewTimer(5, function()
@@ -314,9 +272,9 @@ function frame:INSPECT_READY(guid)
         GUIDS[guid] = nil
         local fullName = U.UnitName(unit)
         local correct_guid = UnitGUID(unit)
-        if correct_guid == guid and BigFootSyncCharacterDB[fullName] then
+        if correct_guid == guid and BFS_Characters[fullName] then
             -- print("INSPECT_READY", unit, guid, fullName)
-            P.SaveUnitItemLevel(BigFootSyncCharacterDB[fullName], unit, guid)
+            P.SaveUnitItemLevel(BFS_Characters[fullName], unit, guid)
         end
     end
 end
@@ -326,7 +284,7 @@ end
 ---------------------------------------------------------------------
 function frame:UPDATE_MOUSEOVER_UNIT()
     if InCombatLockdown() then return end
-    P.SaveUnitBaseData(BigFootSyncCharacterDB, "mouseover", true)
+    P.SaveUnitBaseData(BFS_Characters, "mouseover", true)
     RequestUnitItemLevel("mouseover")
 end
 
@@ -335,6 +293,6 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_TARGET_CHANGED()
     if InCombatLockdown() then return end
-    P.SaveUnitBaseData(BigFootSyncCharacterDB, "target", true)
+    P.SaveUnitBaseData(BFS_Characters, "target", true)
     RequestUnitItemLevel("target")
 end

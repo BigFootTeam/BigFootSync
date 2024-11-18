@@ -40,6 +40,8 @@ local A = BigFootSync.achievements
 -- end)
 
 function A.SaveAchievements(t)
+    if BigFootSync.isVanilla then return end
+
     -- 总成就点数
     t["totalPoints"] = GetTotalAchievementPoints()
 
