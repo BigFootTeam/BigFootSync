@@ -1,8 +1,8 @@
-local _, BigFootBot = ...
-BigFootBot.token = {}
+local _, BigFootSync = ...
+BigFootSync.token = {}
 
-local T = BigFootBot.token
-local U = BigFootBot.utils
+local T = BigFootSync.token
+local U = BigFootSync.utils
 
 local token_debug_print = false
 local TIME_POINTS = {15, 35, 55} -- 获取数据的时间点
@@ -35,7 +35,7 @@ local function SaveTokenPrice()
     if token_debug_print then
         print("UPDATE:", "[" .. timestamp .. "] = " .. price)
     end
-    BigFootBotTokenDB[timestamp] = price
+    BigFootSyncTokenDB[timestamp] = price
     timestamp = nil
 end
 

@@ -1,0 +1,13 @@
+﻿## Interface: 11503
+## Version: r6
+## Title: BigFootSync
+## Title-zhCN: 大脚数据同步
+## Title-zhTW: 大腳數據同步
+## Notes: |cffbc8f8fSync player data|r
+## Notes-zhCN: |cff00ff00BigFootSync|r|n|cffbc8f8f收集玩家数据并上传至服务器(人口统计与英雄榜展示)|r
+## Notes-zhTW: |cff00ff00BigFootSync|r|n|cffbc8f8f收集玩家數據並上傳至服務器(人口統計與英雄榜展示)|r
+## SavedVariables: BigFootSyncRealmDB, BigFootSyncCharacterDB, BigFootSyncAchievementDB, BigFootSyncAccountDB, BigFootSyncGuildDB, BigFootSyncTokenDB
+## SavedVariablesPerCharacter: BigFootSyncPlayerDB
+
+Utils\LoadUtils.xml
+BigFootSync.lua

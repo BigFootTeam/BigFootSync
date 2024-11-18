@@ -1,12 +1,12 @@
-local _, BigFootBot = ...
-BigFootBot.utils = {}
+local _, BigFootSync = ...
+BigFootSync.utils = {}
 
-BigFootBot.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-BigFootBot.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-BigFootBot.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
-BigFootBot.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+BigFootSync.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+BigFootSync.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+BigFootSync.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+BigFootSync.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 
-local U = BigFootBot.utils
+local U = BigFootSync.utils
 
 ---------------------------------------------------------------------
 -- GetBigFootClientVersion
@@ -69,11 +69,11 @@ end
 -- MaxLevel
 ---------------------------------------------------------------------
 function U.GetMaxLevel()
-    if BigFootBot.isCata then
+    if BigFootSync.isCata then
         return 85
-    elseif BigFootBot.isWrath then
+    elseif BigFootSync.isWrath then
         return 80
-    elseif BigFootBot.isVanilla then
+    elseif BigFootSync.isVanilla then
         return 60
     else
         return GetMaxLevelForLatestExpansion()

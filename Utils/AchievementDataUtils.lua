@@ -1,7 +1,7 @@
-local _, BigFootBot = ...
-BigFootBot.achievements = {}
+local _, BigFootSync = ...
+BigFootSync.achievements = {}
 
-local A = BigFootBot.achievements
+local A = BigFootSync.achievements
 
 ---------------------------------------------------------------------
 -- 保存成就数据

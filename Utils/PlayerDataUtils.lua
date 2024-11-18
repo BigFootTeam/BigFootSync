@@ -1,8 +1,8 @@
-local _, BigFootBot = ...
-BigFootBot.players = {}
+local _, BigFootSync = ...
+BigFootSync.players = {}
 
-local P = BigFootBot.players
-local U = BigFootBot.utils
+local P = BigFootSync.players
+local U = BigFootSync.utils
 
 ---------------------------------------------------------------------
 -- 通过unitId保存单位的基础信息
@@ -43,7 +43,7 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     -- 公会
     t["guild"] = GetGuildInfo(unit)
     -- 地区（为了客户端读取方便）
-    t["region"] = BigFootBotAccountDB["region"]
+    t["region"] = BigFootSyncAccountDB["region"]
     -- 游戏版本（为了客户端读取方便）
     t["version"] = U.GetBigFootClientVersion()
     -- 更新时间
@@ -71,7 +71,7 @@ local function SavePlayerBaseData(t)
     -- 装等
     t["avgItemLevel"], t["avgItemLevelEquipped"] = GetAverageItemLevel()
 
-    if BigFootBot.isRetail then
+    if BigFootSync.isRetail then
         -- 专精，无法从 GetSpecializationInfo(GetSpecialization()) 获取，原因未知
         -- t["specId"] = GetSpecializationInfoForClassID(t["classId"], GetSpecialization())
         t["specId"] = GetSpecializationInfo(GetSpecialization())
@@ -85,7 +85,7 @@ end
 local function SavePlayerStatData(t)
     -- 主属性
     local stats = {"strength", "agility", "stamina", "intellect"}
-    if not BigFootBot.isRetail then tinsert(stats, "spirit") end
+    if not BigFootSync.isRetail then tinsert(stats, "spirit") end
     for k, v in pairs(stats) do
         t[v] = select(2, UnitStat("player", k)) -- stat, effectiveStat, posBuff(包括装备), negBuff
     end
@@ -134,7 +134,7 @@ local function SavePlayerStatData(t)
     t["speed"] = nil
     t["resistance"] = nil
 
-    if BigFootBot.isRetail then
+    if BigFootSync.isRetail then
         -- 全能（直接加百分号，伤害增加值，若要获取受到伤害减免值，除以2即可）
         t["versatility"] = GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE)
         -- 吸血
@@ -220,11 +220,11 @@ local CR_WRATH = {
 
 local function SavePlayerCombatRatingData(t)
     local CR
-    if BigFootBot.isRetail then
+    if BigFootSync.isRetail then
         CR = CR_RETAIL
-    elseif BigFootBot.isWrath then
+    elseif BigFootSync.isWrath then
         CR = CR_WRATH
-    elseif BigFootBot.isCata then
+    elseif BigFootSync.isCata then
         CR = CR_CATA -- TODO: 之后再说
     end
     if not CR then return end
@@ -246,7 +246,7 @@ end
 -- https://warcraft.wiki.gg/wiki/InventorySlotId
 
 local INV_SLOTS
-if BigFootBot.isRetail then
+if BigFootSync.isRetail then
     INV_SLOTS = {
         ["head"] = INVSLOT_HEAD,
         ["neck"] = INVSLOT_NECK,
@@ -311,7 +311,7 @@ function P.ShouldUpdateUnitItemLevel(guid)
     return not cached[guid]
 end
 
-if BigFootBot.isRetail then
+if BigFootSync.isRetail then
     local SLOTS = {
         INVSLOT_HEAD,
         INVSLOT_NECK,
@@ -391,7 +391,7 @@ if BigFootBot.isRetail then
     function P.SaveUnitItemLevel(t, unit, guid)
         if not slotData[guid] then slotData[guid] = {} end
 
-        local spec = BigFootBot.isRetail and GetInspectSpecialization(unit)
+        local spec = GetInspectSpecialization(unit)
 
         for _, slot in pairs(SLOTS) do
             slotData[guid][slot] = GetTooltipData(unit, slot)
@@ -409,7 +409,7 @@ if BigFootBot.isRetail then
                 local total = 0
                 local mainQuality, mainEquipLoc, mainClassId, mainSubClassId = GetSlotInfo(unit, INVSLOT_MAINHAND)
                 if spec ~= 72 and mainEquipLoc and (mainQuality == Enum.ItemQuality.Artifact or TWO_HANDED[mainEquipLoc])
-                    and not (BigFootBot.isRetail and mainClassId == 2 and mainSubClassId == 19) then
+                    and not (mainClassId == 2 and mainSubClassId == 19) then -- 2:武器 19:魔杖
                     total = total + max(mainLevel, offLevel) * 2
                 else
                     total = total + mainLevel + offLevel
@@ -512,7 +512,7 @@ end
 ---------------------------------------------------------------------
 local SavePlayerTalents
 
-if BigFootBot.isRetail then
+if BigFootSync.isRetail then
     local function SaveTalentsByConfigID(t, configId)
         local configInfo = C_Traits.GetConfigInfo(configId)
         t["name"] = configInfo.name -- talent loadout name
@@ -614,7 +614,7 @@ function P.SaveGuildMemberData(t, guildName, guildRealm, guildFaction)
         t[name]["guild"] = guildName
         t[name]["realm"] = guildRealm -- 默认为公会服务器
         t[name]["faction"] = guildFaction -- 默认为公会阵营
-        t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
+        t[name]["region"] = BigFootSyncAccountDB["region"] -- 地区（为了客户端读取方便）
         t[name]["version"] = U.GetBigFootClientVersion() -- 游戏版本（为了客户端读取方便）
         t[name]["lastSeen"] = GetServerTime() -- 更新时间
     end
@@ -649,7 +649,7 @@ function P.SaveFriendData(t)
         if info.className ~= _G.UNKNOWN then
             t[info.name]["classId"] = U.GetClassID(info.className)
         end
-        t[info.name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
+        t[info.name]["region"] = BigFootSyncAccountDB["region"] -- 地区（为了客户端读取方便）
         t[info.name]["faction"] = UnitFactionGroup("player") -- 游戏好友，阵营与玩家一致
         t[info.name]["version"] = U.GetBigFootClientVersion() -- 游戏版本（为了客户端读取方便）
         t[info.name]["lastSeen"] = GetServerTime() -- 更新时间
@@ -693,7 +693,7 @@ function P.SaveBNetFriendData(t, realmDataTable)
                     }
                 end
 
-                t[name]["region"] = BigFootBotAccountDB["region"] -- 地区（为了客户端读取方便）
+                t[name]["region"] = BigFootSyncAccountDB["region"] -- 地区（为了客户端读取方便）
                 t[name]["version"] = version -- 游戏版本（为了客户端读取方便）
             end
         end
