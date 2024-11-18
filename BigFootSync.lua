@@ -1,8 +1,9 @@
 local addonName, BigFootSync = ...
 _G.BigFootSync = BigFootSync
 
-local P = BigFootSync.players
-local A = BigFootSync.achievements
+local P = BigFootSync.player
+local A = BigFootSync.achievement
+local M = BigFootSync.mount
 local U = BigFootSync.utils
 local T = BigFootSync.token
 
@@ -37,9 +38,9 @@ function frame:ADDON_LOADED(arg)
             ["gameVersion"] = GetBuildInfo(), -- 当前账号配置对应的版本号，例如 10.2.7
             ["clientVersion"] = U.GetBigFootClientVersion(), -- 对应大脚客户端内游戏版本ID
             ["addonVersion"] = C_AddOns.GetAddOnMetadata(addonName, "Version"), -- 插件版本
-            ["bigfootVersion"] = BIGFOOT_VERSION,
-            ["specId"] = 0,
-            ["titleId"] = 0,
+            ["bigfootVersion"] = BIGFOOT_VERSION or "",
+            ["specId"] = -1,
+            ["titleId"] = -1,
             ["equipments"] = {},
             ["stats"] = {},
             ["talents"] = {},
@@ -117,6 +118,8 @@ function frame:PLAYER_LOGIN()
 
     -- 成就
     A.SaveAchievements(BFS_Account["achievements"])
+    -- 坐骑
+    BFS_Account["mounts"] = M.GetMounts()
     -- 天赋
     P.SavePlayerTalents(BFS_Account["talents"])
     -- 装备

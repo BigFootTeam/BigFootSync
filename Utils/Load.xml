@@ -3,5 +3,6 @@
     <Script file="Common.lua"/>
     <Script file="PlayerDataUtil.lua"/>
     <Script file="AchievementUtil.lua"/>
+    <Script file="MountUtil.lua"/>
     <Script file="WoWTokenUtil.lua"/>
 </Ui>

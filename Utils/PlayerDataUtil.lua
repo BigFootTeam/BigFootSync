@@ -1,7 +1,7 @@
 local _, BigFootSync = ...
-BigFootSync.players = {}
+BigFootSync.player = {}
 
-local P = BigFootSync.players
+local P = BigFootSync.player
 local U = BigFootSync.utils
 
 ---------------------------------------------------------------------
