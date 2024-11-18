@@ -9,5 +9,5 @@
 ## SavedVariables: BFS_Realm, BFS_Characters, BFS_Account, BFS_Guild, BFS_Token
 # SavedVariablesPerCharacter: BFS_Player
 
-Utils\LoadUtils.xml
+Utils\Load.xml
 BigFootSync.lua

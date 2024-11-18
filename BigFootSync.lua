@@ -29,7 +29,7 @@ function frame:ADDON_LOADED(arg)
         -- 所有玩家的数据（每次上线清空）
         BFS_Characters = {} -- BigFootSyncCharacterDB
 
-        -- 账号相关信息（每次上线清空）
+        -- 账号与当前登录角色的数据（每次上线清空）
         BFS_Account = { -- BigFootSyncAccountDB
             ["fullName"] = U.UnitName("player"),
             ["region"] = GetCVar("portal"), -- 区域
