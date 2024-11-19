@@ -13,13 +13,13 @@ local U = BigFootSync.utils
 ---------------------------------------------------------------------
 function U.GetBigFootClientVersion(wowProjectID)
     wowProjectID = wowProjectID or WOW_PROJECT_ID
-    if wowProjectID == WOW_PROJECT_MAINLINE then
+    if wowProjectID == WOW_PROJECT_MAINLINE then -- 正式服
         return 0
-    elseif wowProjectID == WOW_PROJECT_CLASSIC then
+    elseif wowProjectID == WOW_PROJECT_CLASSIC then -- 经典60
         return 1
-    elseif wowProjectID == WOW_PROJECT_WRATH_CLASSIC then
+    elseif wowProjectID == WOW_PROJECT_WRATH_CLASSIC then -- 巫妖王
         return 3
-    else
+    else -- 大灾变
         return 2
     end
 end
