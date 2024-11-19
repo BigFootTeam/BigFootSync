@@ -131,9 +131,6 @@ function frame:PLAYER_LOGIN()
     -- 保存好友信息
     -- P.SaveFriendData(BFS_Characters)
     -- P.SaveBNetFriendData(BFS_Characters, BFS_Realm)
-
-    -- 请求公会数据
-    C_GuildInfo.GuildRoster()
 end
 
 ---------------------------------------------------------------------
@@ -145,6 +142,12 @@ function frame:PLAYER_ENTERING_WORLD()
     -- 已经在队伍中
     if IsInGroup() then
         frame:GROUP_ROSTER_UPDATE()
+    end
+
+    if IsInGuild() then
+        C_Timer.After(5, function()
+            C_GuildInfo.GuildRoster()
+        end)
     end
 end
 
@@ -158,9 +161,7 @@ function frame:GUILD_ROSTER_UPDATE()
         return
     end
 
-    frame:UnregisterEvent("GUILD_ROSTER_UPDATE") -- 仅扫描一次公会成员
     frame.updateGuildRosterRequired = nil
-
     if not IsInGuild() then return end
 
     local guildName, _, _, guildRealm = GetGuildInfo("player")
@@ -183,8 +184,22 @@ function frame:GUILD_ROSTER_UPDATE()
     -- NOTE: 怀旧服没有 GetMaxLevelForLatestExpansion
     local maxLevel = GetMaxLevelForExpansionLevel(LE_EXPANSION_LEVEL_CURRENT)
 
+    if BFS_Guild["members"] == 0 then
+        C_Timer.After(2, function()
+            C_GuildInfo.GuildRoster()
+        end)
+        return
+    end
+
     for i = 1, BFS_Guild["members"] do
         local name, _, _, level, _, _, _, _, isOnline, _, classFile = GetGuildRosterInfo(i)
+        if not (name and level) then
+            C_Timer.After(2, function()
+                C_GuildInfo.GuildRoster()
+            end)
+            return
+        end
+
         if isOnline then
             BFS_Guild["online"] = BFS_Guild["online"] + 1
         end
@@ -199,6 +214,8 @@ function frame:GUILD_ROSTER_UPDATE()
             BFS_Guild["classesAtMaxLevel"][classId] = (BFS_Guild["classesAtMaxLevel"][classId] or 0) + 1
         end
     end
+
+    frame:UnregisterEvent("GUILD_ROSTER_UPDATE") -- 仅扫描一次公会成员
 
     -- 公会成员信息
     -- P.SaveGuildMemberData(BFS_Characters, guildName, guildRealm, guildFaction)
