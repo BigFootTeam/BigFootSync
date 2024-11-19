@@ -32,7 +32,7 @@ function frame:ADDON_LOADED(arg)
 
         -- 账号与当前登录角色的数据（每次上线清空）
         BFS_Account = { -- BigFootSyncAccountDB
-            ["fullName"] = U.UnitName("player"),
+            ["fullName"] = "",
             ["region"] = GetCVar("portal"), -- 区域
             ["isTrial"] = IsTrialAccount(), -- 是否为试玩账号
             ["gameVersion"] = GetBuildInfo(), -- 当前账号配置对应的版本号，例如 10.2.7
@@ -108,6 +108,7 @@ function frame:PLAYER_LOGIN()
     P.SaveUnitBaseData(BFS_Characters, "player", true)
 
     -- 保存玩家自己的部分基础信息到 BFS_Account
+    BFS_Account["fullName"] = U.UnitName("player")
     if BigFootSync.isRetail then
         -- 专精，无法从 GetSpecializationInfo(GetSpecialization()) 获取，原因未知
         -- t["specId"] = GetSpecializationInfoForClassID(t["classId"], GetSpecialization())
