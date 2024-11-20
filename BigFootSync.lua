@@ -270,12 +270,12 @@ end
 local GUIDS = {}
 
 local function RequestUnitItemLevel(unit)
-    if (InspectFrame and InspectFrame:IsShown()) or (CharacterFrame and CharacterFrame:IsShown()) or UnitIsUnit(unit, "player") then
+    if not UnitIsPlayer(unit) or (InspectFrame and InspectFrame:IsShown()) or (CharacterFrame and CharacterFrame:IsShown()) or UnitIsUnit(unit, "player") then
         return
     end
 
     local level = UnitLevel(unit)
-    if level == U.GetMaxLevel() and CanInspect(unit) and (BigFootSync.isRetail or CheckInteractDistance(unit, 4)) then
+    if level == U.GetMaxLevel() and (BigFootSync.isRetail or CheckInteractDistance(unit, 4)) and CanInspect(unit) then
         local guid = UnitGUID(unit)
         if guid and P.ShouldUpdateUnitItemLevel(guid) then
             local fullName = U.UnitName(unit)
