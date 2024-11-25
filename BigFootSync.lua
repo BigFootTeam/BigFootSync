@@ -102,6 +102,7 @@ function frame:PLAYER_LOGIN()
         ["name"] = GetRealmName(), -- 服务器名
         ["normalizedName"] = GetNormalizedRealmName(), -- 服务器名（去除空格等符号，外服常见）
         ["region"] = GetCVar("portal"), -- 区域
+        ["clientVersion"] = U.GetBigFootClientVersion(),
     }
 
     -- 保存玩家自己的基础信息到 BFS_Characters（所有收集到的玩家数据）
