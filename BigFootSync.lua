@@ -1,11 +1,13 @@
 local addonName, BigFootSync = ...
 _G.BigFootSync = BigFootSync
 
+local U = BigFootSync.utils
 local P = BigFootSync.player
+local E = BigFootSync.equipment
 local A = BigFootSync.achievement
 local M = BigFootSync.mount
-local U = BigFootSync.utils
 local T = BigFootSync.token
+local TP = BigFootSync.tradingPost
 
 ---------------------------------------------------------------------
 -- events
@@ -65,6 +67,7 @@ function frame:ADDON_LOADED(arg)
         frame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
         frame:RegisterEvent("PLAYER_TARGET_CHANGED")
         frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
         frame:RegisterEvent("INSPECT_READY")
     end
 end
@@ -125,9 +128,11 @@ function frame:PLAYER_LOGIN()
     -- 天赋
     P.SavePlayerTalents(BFS_Account["talents"])
     -- 装备
-    P.SavePlayerEquipmentData(BFS_Account["equipments"])
+    E.UpdateEquipments(BFS_Account["equipments"])
     -- 属性
     P.SavePlayerStatData(BFS_Account["stats"])
+    -- 商栈
+    -- TP.UpdateTradingPostInfo(t)
 
     -- 保存好友信息
     -- P.SaveFriendData(BFS_Characters)
@@ -150,6 +155,15 @@ function frame:PLAYER_ENTERING_WORLD()
             C_GuildInfo.GuildRoster()
         end)
     end
+end
+
+---------------------------------------------------------------------
+-- 装备发生变化
+---------------------------------------------------------------------
+function frame:PLAYER_EQUIPMENT_CHANGED(equipmentSlot, hasCurrent)
+    if InCombatLockdown() then return end
+    E.UpdateEquipments(BFS_Account["equipments"], equipmentSlot)
+    P.SavePlayerStatData(BFS_Account["stats"])
 end
 
 ---------------------------------------------------------------------

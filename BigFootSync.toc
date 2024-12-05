@@ -1,5 +1,5 @@
 ﻿## Interface: 110005
-## Version: r6
+## Version: r7
 ## Title: BigFootSync
 ## Title-zhCN: 大脚数据同步
 ## Title-zhTW: 大腳數據同步
@@ -10,5 +10,6 @@
 # SavedVariablesPerCharacter: BFS_Player
 ## IconTexture: Interface\AddOns\BigFootSync\icon.png
 
-Utils\Load.xml
+Utils.lua
+DataSource\Load.xml
 BigFootSync.lua
