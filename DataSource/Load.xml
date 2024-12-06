@@ -5,4 +5,5 @@
     <Script file="Achievement.lua"/>
     <Script file="Mount.lua"/>
     <Script file="WoWToken.lua"/>
+    <Script file="TradingPost.lua"/>
 </Ui>

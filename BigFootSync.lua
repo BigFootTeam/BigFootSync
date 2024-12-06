@@ -49,6 +49,10 @@ function frame:ADDON_LOADED(arg)
             ["mounts"] = "",
             ["pets"] = {},
             ["achievements"] = {},
+            ["tradingPost"] = {
+                ["amount"] = 0,
+                ["knownItems"] = "",
+            },
         }
 
         -- 玩家自己的公会信息（每次上线清空）
@@ -93,6 +97,9 @@ function frame:PLAYER_LOGOUT()
 
     -- 保存成就信息
     -- A.SaveAchievements() -- 会增加下线/重载前的卡顿时间
+
+    -- 保存商栈已知物品
+    TP.SaveTradingPostKnownItems(BFS_Account["tradingPost"])
 end
 
 ---------------------------------------------------------------------
@@ -132,7 +139,11 @@ function frame:PLAYER_LOGIN()
     -- 属性
     P.SavePlayerStatData(BFS_Account["stats"])
     -- 商栈
-    -- TP.UpdateTradingPostInfo(t)
+    if BigFootSync.isRetail then
+        TP.UpdateTradingPostCurrency(BFS_Account["tradingPost"])
+        frame:RegisterEvent("PERKS_PROGRAM_CURRENCY_REFRESH")
+        frame:RegisterEvent("PERKS_PROGRAM_DATA_REFRESH")
+    end
 
     -- 保存好友信息
     -- P.SaveFriendData(BFS_Characters)
@@ -155,6 +166,17 @@ function frame:PLAYER_ENTERING_WORLD()
             C_GuildInfo.GuildRoster()
         end)
     end
+end
+
+---------------------------------------------------------------------
+-- 商栈
+---------------------------------------------------------------------
+function frame:PERKS_PROGRAM_CURRENCY_REFRESH()
+    TP.UpdateTradingPostCurrency(BFS_Account["tradingPost"])
+end
+
+function frame:PERKS_PROGRAM_DATA_REFRESH()
+    TP.UpdateTradingPostKnownItems()
 end
 
 ---------------------------------------------------------------------
