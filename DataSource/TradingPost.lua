@@ -1,6 +1,8 @@
-local _, BigFootSync = ...
+---@class BigFootSync
+local BigFootSync = select(2, ...)
 BigFootSync.tradingPost = {}
 
+---@class TradingPost
 local TP = BigFootSync.tradingPost
 
 if BigFootSync.isRetail then

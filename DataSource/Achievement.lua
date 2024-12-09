@@ -1,6 +1,8 @@
-local _, BigFootSync = ...
+---@class BigFootSync
+local BigFootSync = select(2, ...)
 BigFootSync.achievement = {}
 
+---@class Achievement
 local A = BigFootSync.achievement
 
 ---------------------------------------------------------------------

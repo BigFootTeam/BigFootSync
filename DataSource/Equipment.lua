@@ -1,6 +1,8 @@
-local _, BigFootSync = ...
+---@class BigFootSync
+local BigFootSync = select(2, ...)
 BigFootSync.equipment = {}
 
+---@class Equipment
 local E = BigFootSync.equipment
 
 ---------------------------------------------------------------------
@@ -166,5 +168,223 @@ function E.UpdateEquipments(t, slot)
         for id in pairs(INV_SLOT_NAME) do
             t[INV_SLOT_NAME[id]] = ExtractEquipmentData(id)
         end
+    end
+end
+
+---------------------------------------------------------------------
+-- 平均装等
+---------------------------------------------------------------------
+local GetDetailedItemLevelInfo = GetDetailedItemLevelInfo or C_Item.GetDetailedItemLevelInfo
+
+local cached = {}
+BigFootSync.cachedItemLevels = cached
+
+function E.ShouldUpdateUnitItemLevel(guid)
+    return not cached[guid]
+end
+
+if BigFootSync.isRetail then
+    local SLOTS = {
+        INVSLOT_HEAD,
+        INVSLOT_NECK,
+        INVSLOT_SHOULDER,
+        INVSLOT_CHEST,
+        INVSLOT_WAIST,
+        INVSLOT_LEGS,
+        INVSLOT_FEET,
+        INVSLOT_WRIST,
+        INVSLOT_HAND,
+        INVSLOT_FINGER1,
+        INVSLOT_FINGER2,
+        INVSLOT_TRINKET1,
+        INVSLOT_TRINKET2,
+        INVSLOT_BACK,
+        INVSLOT_MAINHAND,
+        INVSLOT_OFFHAND,
+    }
+
+    local NUM_SLOTS = 16
+
+    local TWO_HANDED = {
+        INVTYPE_2HWEAPON = true,
+        INVTYPE_RANGED = true,
+        INVTYPE_RANGEDRIGHT = true,
+    }
+
+    local ITEM_LEVEL_PATTERN = ITEM_LEVEL:gsub("%%d", "(%%d+)")
+    local ITEM_LEVEL_ALT_PATTERN = ITEM_LEVEL_ALT:gsub("%%d %(%%d%)", "%%d+ %%((%%d+)%%)")
+
+    local GetTooltipData = C_TooltipInfo.GetInventoryItem
+    -- local scanner = CreateFrame("GameTooltip", "BigFootScanner", UIParent, "GameTooltipTemplate")
+    -- if not GetTooltipData then
+    --     GetTooltipData = function(unit, slot)
+    --         scanner:SetOwner(UIParent, "ANCHOR_NONE")
+    --         local hasItem = scanner:SetInventoryItem(unit, slot)
+    --         if hasItem then
+    --             scanner:Show()
+    --             return scanner:GetTooltipData()
+    --         end
+    --     end
+    -- end
+
+    local function GetSlotInfo(unit, slot)
+        local item = GetInventoryItemLink(unit, slot)
+        if item then
+            local _, _, quality, _, _, _, _, _, equipLoc, _, _, classId, subClassId = C_Item.GetItemInfo(item)
+            return quality, equipLoc, classId, subClassId
+        end
+    end
+
+    local function GetSlotLevel(data)
+        if not data then
+            return 0
+        end
+
+        local line = data.lines[1]
+        local text = line and line.leftText
+        if not text or text == RETRIEVING_ITEM_INFO then
+            return nil
+        end
+
+        for i = 2, #data.lines do
+            local line = data.lines[i]
+            local text = line.leftText
+            if text and text ~= "" then
+                text = text:match(ITEM_LEVEL_PATTERN) or text:match(ITEM_LEVEL_ALT_PATTERN)
+                if text then
+                    return tonumber(text)
+                end
+            end
+        end
+    end
+
+    -- local function GetSlotLevel(link)
+    --     if not link then
+    --         return 0
+    --     end
+    --     return GetDetailedItemLevelInfo(link)
+    -- end
+
+    local slotData = {}
+
+    function E.SaveUnitItemLevel(t, unit, guid)
+        if not slotData[guid] then slotData[guid] = {} end
+
+        local spec = GetInspectSpecialization(unit)
+
+        for _, slot in pairs(SLOTS) do
+            slotData[guid][slot] = GetTooltipData(unit, slot)
+            -- slotData[guid][slot] = GetInventoryItemLink(unit, slot)
+        end
+
+        C_Timer.After(0.1, function()
+            local mainLevel = GetSlotLevel(slotData[guid][INVSLOT_MAINHAND])
+            local offLevel = GetSlotLevel(slotData[guid][INVSLOT_OFFHAND])
+            slotData[guid][INVSLOT_MAINHAND] = nil
+            slotData[guid][INVSLOT_OFFHAND] = nil
+
+            -- print(mainLevel, offLevel)
+
+            if mainLevel and offLevel then
+                local total = 0
+                local mainQuality, mainEquipLoc, mainClassId, mainSubClassId = GetSlotInfo(unit, INVSLOT_MAINHAND)
+                if spec ~= 72 and mainEquipLoc and (mainQuality == Enum.ItemQuality.Artifact or TWO_HANDED[mainEquipLoc])
+                    and not (mainClassId == 2 and mainSubClassId == 19) then -- 2:武器 19:魔杖
+                    total = total + max(mainLevel, offLevel) * 2
+                else
+                    total = total + mainLevel + offLevel
+                end
+
+                for _, data in pairs(slotData[guid]) do
+                    local slot = GetSlotLevel(data)
+                    -- print(data.hyperlink, slot)
+                    if slot then
+                        total = total + slot
+                    else
+                        total = nil
+                        break
+                    end
+                end
+
+                if total and total ~= 0 then
+                    t["itemLevel"] = max(Round(total / NUM_SLOTS), 1)
+                    cached[guid] = GetTime()
+                    -- print(t["itemLevel"])
+                end
+
+            end
+
+            slotData[guid] = nil
+        end)
+    end
+
+else
+    local SLOTS = {
+        INVSLOT_HEAD,
+        INVSLOT_NECK,
+        INVSLOT_SHOULDER,
+        INVSLOT_CHEST,
+        INVSLOT_WAIST,
+        INVSLOT_LEGS,
+        INVSLOT_FEET,
+        INVSLOT_WRIST,
+        INVSLOT_HAND,
+        INVSLOT_FINGER1,
+        INVSLOT_FINGER2,
+        INVSLOT_TRINKET1,
+        INVSLOT_TRINKET2,
+        INVSLOT_BACK,
+        INVSLOT_RANGED,
+    }
+
+    local NUM_SLOTS = 17
+
+    local function GetSlotLevel(unit, slot)
+        local link = GetInventoryItemLink(unit, slot)
+        local level = 0
+        if link then
+            -- level = select(4, GetItemInfo(link))
+            level = GetDetailedItemLevelInfo(link)
+        end
+        return level
+    end
+
+    function E.SaveUnitItemLevel(t, unit, guid)
+        C_Timer.After(0.1, function()
+            local mainLevel, offLevel = 0, 0
+            local mainEquipLoc
+
+            local mainLink = GetInventoryItemLink(unit, INVSLOT_MAINHAND)
+            if mainLink then
+                mainLevel = GetDetailedItemLevelInfo(mainLink)
+                mainEquipLoc = select(9, GetItemInfo(mainLink))
+            end
+
+            local offLink = GetInventoryItemLink(unit, INVSLOT_OFFHAND)
+            if offLink then
+                offLevel = GetDetailedItemLevelInfo(offLink)
+            end
+
+            if mainLevel and offLevel then
+                local total = 0
+                if mainEquipLoc and mainEquipLoc == INVTYPE_2HWEAPON then
+                    total = total + mainLevel * 2
+                else
+                    total = total + mainLevel + offLevel
+                end
+
+                for _, slot in pairs(SLOTS) do
+                    slot = GetSlotLevel(unit, slot)
+                    total = total + slot
+                end
+
+                if total and total ~= 0 then
+                    t["itemLevel"] = max(Round(total / NUM_SLOTS), 1)
+                    cached[guid] = GetTime()
+                    -- print(t["itemLevel"])
+                end
+
+            end
+        end)
     end
 end

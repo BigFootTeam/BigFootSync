@@ -1,6 +1,8 @@
-local _, BigFootSync = ...
+---@class BigFootSync
+local BigFootSync = select(2, ...)
 BigFootSync.mount = {}
 
+---@class Mount
 local M = BigFootSync.mount
 
 if BigFootSync.isRetail then

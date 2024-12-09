@@ -1,4 +1,5 @@
-local _, BigFootSync = ...
+---@class BigFootSync
+local BigFootSync = select(2, ...)
 BigFootSync.utils = {}
 
 BigFootSync.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
@@ -6,6 +7,7 @@ BigFootSync.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 BigFootSync.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 BigFootSync.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 
+---@class Utils
 local U = BigFootSync.utils
 
 ---------------------------------------------------------------------

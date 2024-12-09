@@ -1,5 +1,18 @@
-local addonName, BigFootSync = ...
+local addonName = ...
+
+---@class BigFootSync
+local BigFootSync = select(2, ...)
 _G.BigFootSync = BigFootSync
+
+---@class BigFootSync
+---@field utils Utils
+---@field player Player
+---@field talent Talent
+---@field equipment Equipment
+---@field achievement Achievement
+---@field mount Mount
+---@field token Token
+---@field tradingPost TradingPost
 
 local U = BigFootSync.utils
 local P = BigFootSync.player
@@ -8,6 +21,7 @@ local A = BigFootSync.achievement
 local M = BigFootSync.mount
 local T = BigFootSync.token
 local TP = BigFootSync.tradingPost
+local TL = BigFootSync.talent
 
 ---------------------------------------------------------------------
 -- events
@@ -73,6 +87,9 @@ function frame:ADDON_LOADED(arg)
         frame:RegisterEvent("PLAYER_ENTERING_WORLD")
         frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
         frame:RegisterEvent("INSPECT_READY")
+        if BigFootSync.isRetail then
+            frame:RegisterEvent("TRAIT_CONFIG_UPDATED")
+        end
     end
 end
 
@@ -123,7 +140,7 @@ function frame:PLAYER_LOGIN()
     if BigFootSync.isRetail then
         -- 专精，无法从 GetSpecializationInfo(GetSpecialization()) 获取，原因未知
         -- t["specId"] = GetSpecializationInfoForClassID(t["classId"], GetSpecialization())
-        BFS_Account["specId"] = GetSpecializationInfo(GetSpecialization())
+        BFS_Account["specId"] = PlayerUtil.GetCurrentSpecID()
     end
     BFS_Account["titleId"] = GetCurrentTitle()
     BFS_Account["avgItemLevel"], BFS_Account["avgItemLevelEquipped"] = GetAverageItemLevel()
@@ -133,7 +150,7 @@ function frame:PLAYER_LOGIN()
     -- 坐骑
     BFS_Account["mounts"] = M.GetMounts()
     -- 天赋
-    P.SavePlayerTalents(BFS_Account["talents"])
+    TL.SaveTalents(BFS_Account["talents"])
     -- 装备
     E.UpdateEquipments(BFS_Account["equipments"])
     -- 属性
@@ -186,6 +203,13 @@ function frame:PLAYER_EQUIPMENT_CHANGED(equipmentSlot, hasCurrent)
     if InCombatLockdown() then return end
     E.UpdateEquipments(BFS_Account["equipments"], equipmentSlot)
     P.SavePlayerStatData(BFS_Account["stats"])
+end
+
+---------------------------------------------------------------------
+-- 天赋变动
+---------------------------------------------------------------------
+function frame:TRAIT_CONFIG_UPDATED()
+    TL.SaveTalents(BFS_Account["talents"])
 end
 
 ---------------------------------------------------------------------
@@ -314,7 +338,7 @@ local function RequestUnitItemLevel(unit)
     local level = UnitLevel(unit)
     if level == U.GetMaxLevel() and (BigFootSync.isRetail or CheckInteractDistance(unit, 4)) and CanInspect(unit) then
         local guid = UnitGUID(unit)
-        if guid and P.ShouldUpdateUnitItemLevel(guid) then
+        if guid and E.ShouldUpdateUnitItemLevel(guid) then
             local fullName = U.UnitName(unit)
             -- print("REQUEST", unit, guid, fullName)
             GUIDS[guid] = unit
@@ -332,7 +356,7 @@ function frame:INSPECT_READY(guid)
         local correct_guid = UnitGUID(unit)
         if correct_guid == guid and BFS_Characters[fullName] then
             -- print("INSPECT_READY", unit, guid, fullName)
-            P.SaveUnitItemLevel(BFS_Characters[fullName], unit, guid)
+            E.SaveUnitItemLevel(BFS_Characters[fullName], unit, guid)
         end
     end
 end

@@ -1,8 +1,10 @@
-local _, BigFootSync = ...
+---@class BigFootSync
+local BigFootSync = select(2, ...)
 BigFootSync.token = {}
 
-local T = BigFootSync.token
 local U = BigFootSync.utils
+---@class Token
+local T = BigFootSync.token
 
 local token_debug_print = false
 local TIME_POINTS = {15, 35, 55} -- 获取数据的时间点
