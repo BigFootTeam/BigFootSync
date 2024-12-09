@@ -36,5 +36,5 @@ if BigFootSync.isRetail then
 else
     function TP.UpdateTradingPostCurrency(t) end
     function TP.UpdateTradingPostKnownItems(t) end
-    function TP.UpdateTradingPostKnownItemsFormat(t) end
+    function TP.SaveTradingPostKnownItems(t) end
 end

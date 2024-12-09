@@ -220,6 +220,8 @@ end
 ---------------------------------------------------------------------
 -- 平均装等
 ---------------------------------------------------------------------
+local GetDetailedItemLevelInfo = GetDetailedItemLevelInfo or C_Item.GetDetailedItemLevelInfo
+
 local cached = {}
 function P.ShouldUpdateUnitItemLevel(guid)
     return not cached[guid]
@@ -300,6 +302,13 @@ if BigFootSync.isRetail then
         end
     end
 
+    -- local function GetSlotLevel(link)
+    --     if not link then
+    --         return 0
+    --     end
+    --     return GetDetailedItemLevelInfo(link)
+    -- end
+
     local slotData = {}
 
     function P.SaveUnitItemLevel(t, unit, guid)
@@ -309,6 +318,7 @@ if BigFootSync.isRetail then
 
         for _, slot in pairs(SLOTS) do
             slotData[guid][slot] = GetTooltipData(unit, slot)
+            -- slotData[guid][slot] = GetInventoryItemLink(unit, slot)
         end
 
         C_Timer.After(0.1, function()
@@ -377,7 +387,8 @@ else
         local link = GetInventoryItemLink(unit, slot)
         local level = 0
         if link then
-            level = select(4, GetItemInfo(link))
+            -- level = select(4, GetItemInfo(link))
+            level = GetDetailedItemLevelInfo(link)
         end
         return level
     end
@@ -389,12 +400,13 @@ else
 
             local mainLink = GetInventoryItemLink(unit, INVSLOT_MAINHAND)
             if mainLink then
-                mainLevel, _, _, _, _, mainEquipLoc = select(4, GetItemInfo(mainLink))
+                mainLevel = GetDetailedItemLevelInfo(mainLink)
+                mainEquipLoc = select(9, GetItemInfo(mainLink))
             end
 
             local offLink = GetInventoryItemLink(unit, INVSLOT_OFFHAND)
             if offLink then
-                offLevel = select(4, GetItemInfo(offLink))
+                offLevel = GetDetailedItemLevelInfo(offLink)
             end
 
             if mainLevel and offLevel then

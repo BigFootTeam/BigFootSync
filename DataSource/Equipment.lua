@@ -36,7 +36,8 @@ end
 local GetInventoryItemLink = GetInventoryItemLink
 local GetItemName = C_Item.GetItemName
 local GetItemCraftedQualityByItemInfo = C_TradeSkillUI and C_TradeSkillUI.GetItemCraftedQualityByItemInfo
-local GetItemStats = C_Item.GetItemStats
+local GetItemStats = GetItemStats or C_Item.GetItemStats
+local GetDetailedItemLevelInfo = GetDetailedItemLevelInfo or C_Item.GetDetailedItemLevelInfo
 
 local ID_INDEX = 1
 local ENCHANT_INDEX = 2
@@ -115,18 +116,6 @@ local function ExtractEquipmentData(slot)
             end
         end
 
-        -- craftedStats
-        data.craftedStats = {}
-        if data.modifiers[CRAFTING_STAT_1] then
-            tinsert(data.craftedStats, data.modifiers[CRAFTING_STAT_1])
-        end
-        if data.modifiers[CRAFTING_STAT_2] then
-            tinsert(data.craftedStats, data.modifiers[CRAFTING_STAT_2])
-        end
-
-        -- crafted quality
-        data.craftedQuality = GetItemCraftedQualityByItemInfo(link)
-
         -- simc
         data.simc = data.slot .. "=,id=" .. data.id
         if data.enchant then
@@ -138,15 +127,34 @@ local function ExtractEquipmentData(slot)
         if #data.bonuses ~= 0 then
             data.simc = data.simc .. ",bonus_id=" .. table.concat(data.bonuses, "/")
         end
-        if #data.craftedStats ~= 0 then
-            data.simc = data.simc .. ",crafted_stats=" .. table.concat(data.craftedStats, "/")
-        end
-        if data.craftedQuality then
-            data.simc = data.simc .. ",crafting_quality=" .. data.craftedQuality
+
+        if BigFootSync.isRetail then
+            -- craftedStats
+            data.craftedStats = {}
+            if data.modifiers[CRAFTING_STAT_1] then
+                tinsert(data.craftedStats, data.modifiers[CRAFTING_STAT_1])
+            end
+            if data.modifiers[CRAFTING_STAT_2] then
+                tinsert(data.craftedStats, data.modifiers[CRAFTING_STAT_2])
+            end
+
+            -- crafted quality
+            data.craftedQuality = GetItemCraftedQualityByItemInfo(link)
+
+            -- simc
+            if #data.craftedStats ~= 0 then
+                data.simc = data.simc .. ",crafted_stats=" .. table.concat(data.craftedStats, "/")
+            end
+            if data.craftedQuality then
+                data.simc = data.simc .. ",crafting_quality=" .. data.craftedQuality
+            end
         end
 
         -- stats
         data.stats = GetItemStats(link)
+
+        -- level
+        data.level = GetDetailedItemLevelInfo(link)
     end
     return data
 end
