@@ -215,6 +215,8 @@ end
 ---------------------------------------------------------------------
 -- 公会
 ---------------------------------------------------------------------
+local isGuildScanned = false
+local lastGuildUpdate
 function frame:GUILD_ROSTER_UPDATE()
     if InCombatLockdown() then
         frame:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -232,51 +234,59 @@ function frame:GUILD_ROSTER_UPDATE()
 
     -- 公会信息
     BFS_Guild["name"] = guildName
-    BFS_Guild["members"] = GetNumGuildMembers()
     BFS_Guild["realm"] = guildRealm
     BFS_Guild["faction"] = guildFaction
     BFS_Guild["region"] = BFS_Account["region"]
 
-    -- 公会在线人数/等级/职业分布
-    BFS_Guild["online"] = 0
-    BFS_Guild["levels"] = {}
-    BFS_Guild["classesAtMaxLevel"] = {}
-
-    -- NOTE: 怀旧服没有 GetMaxLevelForLatestExpansion
-    local maxLevel = GetMaxLevelForExpansionLevel(LE_EXPANSION_LEVEL_CURRENT)
-
-    if BFS_Guild["members"] == 0 then
-        C_Timer.After(2, function()
-            C_GuildInfo.GuildRoster()
-        end)
-        return
+    -- 人数（在线为当天最大值）
+    local day = date("%d")
+    if lastGuildUpdate ~= day then
+        BFS_Guild["online"] = 0
     end
+    local online
+    BFS_Guild["members"], online = GetNumGuildMembers()
+    BFS_Guild["online"] = max(BFS_Guild["online"], online or 0)
+    lastGuildUpdate = day
 
-    for i = 1, BFS_Guild["members"] do
-        local name, _, _, level, _, _, _, _, isOnline, _, classFile = GetGuildRosterInfo(i)
-        if not (name and level) then
+    -- 公会等级/职业分布（只扫描一次）
+    if not isGuildScanned then
+        BFS_Guild["levels"] = {}
+        BFS_Guild["classesAtMaxLevel"] = {}
+
+        -- NOTE: 怀旧服没有 GetMaxLevelForLatestExpansion
+        local maxLevel = GetMaxLevelForExpansionLevel(LE_EXPANSION_LEVEL_CURRENT)
+
+        if BFS_Guild["members"] == 0 then
             C_Timer.After(2, function()
                 C_GuildInfo.GuildRoster()
             end)
             return
         end
 
-        if isOnline then
-            BFS_Guild["online"] = BFS_Guild["online"] + 1
+        for i = 1, BFS_Guild["members"] do
+            local name, _, _, level, _, _, _, _, isOnline, _, classFile = GetGuildRosterInfo(i)
+            if not (name and level) then
+                C_Timer.After(2, function()
+                    C_GuildInfo.GuildRoster()
+                end)
+                return
+            end
+
+            -- 等级分布
+            local k = tostring(level) -- 只要有数字索引1的，不连续的索引会被补nil，且不保持k=v格式
+            BFS_Guild["levels"][k] = (BFS_Guild["levels"][k] or 0) + 1
+
+            -- 满级职业分布
+            if level == maxLevel then
+                local classId = tostring(U.GetClassID(classFile)) -- 同 level
+                BFS_Guild["classesAtMaxLevel"][classId] = (BFS_Guild["classesAtMaxLevel"][classId] or 0) + 1
+            end
         end
 
-        -- 等级分布
-        local k = tostring(level) -- 只要有数字索引1的，不连续的索引会被补nil，且不保持k=v格式
-        BFS_Guild["levels"][k] = (BFS_Guild["levels"][k] or 0) + 1
-
-        -- 满级职业分布
-        if level == maxLevel then
-            local classId = tostring(U.GetClassID(classFile)) -- 同 level
-            BFS_Guild["classesAtMaxLevel"][classId] = (BFS_Guild["classesAtMaxLevel"][classId] or 0) + 1
-        end
+        isGuildScanned = true
     end
 
-    frame:UnregisterEvent("GUILD_ROSTER_UPDATE") -- 仅扫描一次公会成员
+    -- frame:UnregisterEvent("GUILD_ROSTER_UPDATE") -- 仅扫描一次公会成员
 
     -- 公会成员信息
     -- P.SaveGuildMemberData(BFS_Characters, guildName, guildRealm, guildFaction)
