@@ -82,12 +82,13 @@ local function ExtractEquipmentData(slot)
         data.enchant = t[ENCHANT_INDEX]
 
         -- gems
-        data.gems = {}
+        local gems = {}
         for k = GEM_INDEX_START, GEM_INDEX_END do
             if t[k] then
-                tinsert(data.gems, t[k])
+                tinsert(gems, t[k])
             end
         end
+        data.gems = table.concat(gems, ",")
 
         -- suffix
         data.suffix = t[SUFFIX_INDEX]
@@ -96,15 +97,16 @@ local function ExtractEquipmentData(slot)
         data.context = t[CONTEXT_INDEX]
 
         -- bonuses
-        data.bonuses = {}
+        local bonuses = {}
         local numBonusIDs = t[BONUS_INDEX]
         if numBonusIDs then
             local bonusIndex = BONUS_INDEX + 1
             for i = 1, numBonusIDs do
-                tinsert(data.bonuses, t[i])
+                tinsert(bonuses, t[i])
                 bonusIndex = bonusIndex + 1
             end
         end
+        data.bonuses = table.concat(bonuses, ",")
 
         -- modifiers
         data.modifiers = {}
@@ -123,29 +125,30 @@ local function ExtractEquipmentData(slot)
         if data.enchant then
             data.simc = data.simc .. ",enchant_id=" .. data.enchant
         end
-        if #data.gems ~= 0 then
-            data.simc = data.simc .. ",gem_id=" .. table.concat(data.gems, "/")
+        if #gems ~= 0 then
+            data.simc = data.simc .. ",gem_id=" .. table.concat(gems, "/")
         end
-        if #data.bonuses ~= 0 then
-            data.simc = data.simc .. ",bonus_id=" .. table.concat(data.bonuses, "/")
+        if #bonuses ~= 0 then
+            data.simc = data.simc .. ",bonus_id=" .. table.concat(bonuses, "/")
         end
 
         if BigFootSync.isRetail then
             -- craftedStats
-            data.craftedStats = {}
+            local craftedStats = {}
             if data.modifiers[CRAFTING_STAT_1] then
-                tinsert(data.craftedStats, data.modifiers[CRAFTING_STAT_1])
+                tinsert(craftedStats, data.modifiers[CRAFTING_STAT_1])
             end
             if data.modifiers[CRAFTING_STAT_2] then
-                tinsert(data.craftedStats, data.modifiers[CRAFTING_STAT_2])
+                tinsert(craftedStats, data.modifiers[CRAFTING_STAT_2])
             end
+            data.craftedStats = table.concat(craftedStats, ",")
 
             -- crafted quality
             data.craftedQuality = GetItemCraftedQualityByItemInfo(link)
 
             -- simc
-            if #data.craftedStats ~= 0 then
-                data.simc = data.simc .. ",crafted_stats=" .. table.concat(data.craftedStats, "/")
+            if #craftedStats ~= 0 then
+                data.simc = data.simc .. ",crafted_stats=" .. table.concat(craftedStats, "/")
             end
             if data.craftedQuality then
                 data.simc = data.simc .. ",crafting_quality=" .. data.craftedQuality
