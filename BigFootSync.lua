@@ -346,7 +346,7 @@ local function RequestUnitItemLevel(unit)
     end
 
     local level = UnitLevel(unit)
-    if level == U.GetMaxLevel() and (BigFootSync.isRetail or CheckInteractDistance(unit, 4)) and CanInspect(unit) then
+    if level == U.GetMaxLevel() and (BigFootSync.isRetail or CheckInteractDistance(unit, 3)) and CanInspect(unit) then
         local guid = UnitGUID(unit)
         if guid and E.ShouldUpdateUnitItemLevel(guid) then
             local fullName = U.UnitName(unit)
