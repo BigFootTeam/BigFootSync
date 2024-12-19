@@ -86,8 +86,8 @@ function frame:ADDON_LOADED(arg)
         frame:RegisterEvent("PLAYER_TARGET_CHANGED")
         frame:RegisterEvent("PLAYER_ENTERING_WORLD")
         frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-        frame:RegisterEvent("INSPECT_READY")
         if BigFootSync.isRetail then
+            frame:RegisterEvent("INSPECT_READY")
             frame:RegisterEvent("TRAIT_CONFIG_UPDATED")
         end
     end
@@ -341,12 +341,13 @@ end
 local GUIDS = {}
 
 local function RequestUnitItemLevel(unit)
-    if not UnitIsPlayer(unit) or (InspectFrame and InspectFrame:IsShown()) or (CharacterFrame and CharacterFrame:IsShown()) or UnitIsUnit(unit, "player") then
-        return
-    end
+    if not BigFootSync.isRetail then return end
+    if not UnitIsPlayer(unit) or UnitIsUnit(unit, "player") then return end
+    if (InspectFrame and InspectFrame:IsShown()) or (CharacterFrame and CharacterFrame:IsShown()) then return end
 
     local level = UnitLevel(unit)
-    if level == U.GetMaxLevel() and (BigFootSync.isRetail or CheckInteractDistance(unit, 3)) and CanInspect(unit) then
+    -- if level == U.GetMaxLevel() and (BigFootSync.isRetail or CheckInteractDistance(unit, 3)) and CanInspect(unit) then
+    if level == U.GetMaxLevel() and CanInspect(unit) then
         local guid = UnitGUID(unit)
         if guid and E.ShouldUpdateUnitItemLevel(guid) then
             local fullName = U.UnitName(unit)
