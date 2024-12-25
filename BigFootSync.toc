@@ -1,4 +1,4 @@
-﻿## Interface: 110005
+﻿## Interface: 110007
 ## Version: r7
 ## Title: BigFootSync
 ## Title-zhCN: 大脚数据同步
