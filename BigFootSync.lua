@@ -55,8 +55,8 @@ function frame:ADDON_LOADED(arg)
             ["clientVersion"] = U.GetBigFootClientVersion(), -- 对应大脚客户端内游戏版本ID
             ["addonVersion"] = C_AddOns.GetAddOnMetadata(addonName, "Version"), -- 插件版本
             ["bigfootVersion"] = BIGFOOT_VERSION or "",
-            ["specId"] = -1,
-            ["titleId"] = -1,
+            ["specId"] = 0,
+            ["titleId"] = 0,
             ["equipments"] = {},
             ["stats"] = {},
             ["talents"] = {},
