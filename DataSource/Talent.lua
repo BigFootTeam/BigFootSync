@@ -70,7 +70,7 @@ if BigFootSync.isRetail then
     local function SaveTalentsByID(t, specID, configID, isActive)
         local exportStream = ExportUtil.MakeExportDataStream()
         local configInfo = C_Traits.GetConfigInfo(configID)
-        local name = isActive and "CURRENT_ACTIVE" or configInfo.name
+        local name = isActive and "CURRENT_ACTIVE" or "$" .. configInfo.name
         local treeID = configInfo.treeIDs[1]
         local treeHash = C_Traits.GetTreeHash(treeID)
         local serializationVersion = C_Traits.GetLoadoutSerializationVersion()
