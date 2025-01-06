@@ -160,16 +160,31 @@ local function ExtractEquipmentData(slot)
 
         -- level
         data.level = GetDetailedItemLevelInfo(link)
+
+        if not data.level then
+            return data, false
+        end
     end
-    return data
+    return data, true
 end
 
 function E.UpdateEquipments(t, slot)
+    local success
     if slot then
-        t[INV_SLOT_NAME[slot]] = ExtractEquipmentData(slot)
+        t[INV_SLOT_NAME[slot]], success = ExtractEquipmentData(slot)
+        if not success then
+            C_Timer.After(5, function()
+                E.UpdateEquipments(t, slot)
+            end)
+        end
     else
         for id in pairs(INV_SLOT_NAME) do
-            t[INV_SLOT_NAME[id]] = ExtractEquipmentData(id)
+            t[INV_SLOT_NAME[id]], success = ExtractEquipmentData(id)
+            if not success then
+                C_Timer.After(5, function()
+                    E.UpdateEquipments(t, id)
+                end)
+            end
         end
     end
 end

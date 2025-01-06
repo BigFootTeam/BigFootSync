@@ -1,5 +1,5 @@
 ﻿## Interface: 30403
-## Version: r7
+## Version: r8
 ## Title: BigFootSync
 ## Title-zhCN: 大脚数据同步
 ## Title-zhTW: 大腳數據同步
