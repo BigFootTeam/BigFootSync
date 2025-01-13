@@ -160,6 +160,8 @@ function frame:PLAYER_LOGIN()
         TP.UpdateTradingPostCurrency(BFS_Account["tradingPost"])
         frame:RegisterEvent("PERKS_PROGRAM_CURRENCY_REFRESH")
         frame:RegisterEvent("PERKS_PROGRAM_DATA_REFRESH")
+        frame:RegisterEvent("PERKS_PROGRAM_PURCHASE_SUCCESS")
+        frame:RegisterEvent("PERKS_PROGRAM_REFUND_SUCCESS")
     end
 
     -- 保存好友信息
@@ -195,6 +197,9 @@ end
 function frame:PERKS_PROGRAM_DATA_REFRESH()
     TP.UpdateTradingPostKnownItems()
 end
+
+frame.PERKS_PROGRAM_PURCHASE_SUCCESS = frame.PERKS_PROGRAM_DATA_REFRESH
+frame.PERKS_PROGRAM_REFUND_SUCCESS = frame.PERKS_PROGRAM_DATA_REFRESH
 
 ---------------------------------------------------------------------
 -- 装备发生变化
