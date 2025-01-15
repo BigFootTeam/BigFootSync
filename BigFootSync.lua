@@ -9,6 +9,7 @@ _G.BigFootSync = BigFootSync
 ---@field player Player
 ---@field talent Talent
 ---@field equipment Equipment
+---@field profession Profession
 ---@field achievement Achievement
 ---@field mount Mount
 ---@field token Token
@@ -17,6 +18,7 @@ _G.BigFootSync = BigFootSync
 local U = BigFootSync.utils
 local P = BigFootSync.player
 local E = BigFootSync.equipment
+local PF = BigFootSync.profession
 local A = BigFootSync.achievement
 local M = BigFootSync.mount
 local T = BigFootSync.token
@@ -153,6 +155,8 @@ function frame:PLAYER_LOGIN()
     TL.SaveTalents(BFS_Account["talents"])
     -- 装备
     E.UpdateEquipments(BFS_Account["equipments"])
+    -- 专业
+    BFS_Account["professions"] = PF.GetProfessions()
     -- 属性
     P.SavePlayerStatData(BFS_Account["stats"])
     -- 商栈

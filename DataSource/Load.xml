@@ -3,6 +3,7 @@
     <Script file="Player.lua"/>
     <Script file="Talent.lua"/>
     <Script file="Equipment.lua"/>
+    <Script file="Profession.lua"/>
     <Script file="Achievement.lua"/>
     <Script file="Mount.lua"/>
     <Script file="WoWToken.lua"/>
