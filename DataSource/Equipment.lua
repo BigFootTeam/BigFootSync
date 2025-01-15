@@ -102,7 +102,7 @@ local function ExtractEquipmentData(slot)
         if numBonusIDs then
             local bonusIndex = BONUS_INDEX + 1
             for i = 1, numBonusIDs do
-                tinsert(bonuses, t[i])
+                tinsert(bonuses, t[bonusIndex])
                 bonusIndex = bonusIndex + 1
             end
         end
