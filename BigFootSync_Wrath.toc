@@ -1,5 +1,5 @@
 ﻿## Interface: 30403
-## Version: r10
+## Version: r11
 ## Title: BigFootSync
 ## Title-zhCN: 大脚数据同步 |cffc0c0c0r10|r
 ## Title-zhTW: 大腳數據同步 |cffc0c0c0r10|r

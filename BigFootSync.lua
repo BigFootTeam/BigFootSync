@@ -14,6 +14,7 @@ _G.BigFootSync = BigFootSync
 ---@field mount Mount
 ---@field token Token
 ---@field tradingPost TradingPost
+---@field savedInstance SavedInstance
 
 local U = BigFootSync.utils
 local P = BigFootSync.player
@@ -24,6 +25,7 @@ local M = BigFootSync.mount
 local T = BigFootSync.token
 local TP = BigFootSync.tradingPost
 local TL = BigFootSync.talent
+local SI = BigFootSync.savedInstance
 
 ---------------------------------------------------------------------
 -- events
@@ -88,6 +90,7 @@ function frame:ADDON_LOADED(arg)
         frame:RegisterEvent("PLAYER_TARGET_CHANGED")
         frame:RegisterEvent("PLAYER_ENTERING_WORLD")
         frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+        frame:RegisterEvent("UPDATE_INSTANCE_INFO")
         if BigFootSync.isRetail then
             frame:RegisterEvent("INSPECT_READY")
             frame:RegisterEvent("TRAIT_CONFIG_UPDATED")
@@ -397,4 +400,15 @@ function frame:PLAYER_TARGET_CHANGED()
     if InCombatLockdown() then return end
     P.SaveUnitBaseData(BFS_Characters, "target", true)
     RequestUnitItemLevel("target")
+end
+
+---------------------------------------------------------------------
+-- 副本进度
+---------------------------------------------------------------------
+function frame:UPDATE_INSTANCE_INFO()
+    if InCombatLockdown() then return end
+    local savedInstances = SI:GetSavedInstanceInfo()
+    if savedInstances then
+        BFS_Account["savedInstances"] = U.Base64Encode(U.ConvertTableToJson(savedInstances))
+    end
 end

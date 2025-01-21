@@ -8,4 +8,5 @@
     <Script file="Mount.lua"/>
     <Script file="WoWToken.lua"/>
     <Script file="TradingPost.lua"/>
+    <Script file="SavedInstance.lua"/>
 </Ui>
