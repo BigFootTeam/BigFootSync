@@ -20,7 +20,7 @@ function SI:GetSavedInstanceInfo()
                 name = name,
                 difficulty = difficultyName,
                 lockoutID = lockoutId,
-                time = reset,
+                time = time() + reset,
             }
 
             -- bosses
