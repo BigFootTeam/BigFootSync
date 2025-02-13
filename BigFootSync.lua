@@ -78,7 +78,7 @@ function frame:ADDON_LOADED(arg)
 
         -- 时光徽章数据（每次上线清空）
         BFS_Token = {} -- BigFootSyncTokenDB
-        if not BigFootSync.isVanilla then
+        if C_WowTokenPublic.GetCommerceSystemStatus() then
             T:StartTockenPriceUpdater()
         end
 
