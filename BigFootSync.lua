@@ -129,7 +129,9 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
     local connectedRealms = GetAutoCompleteRealms()
-    tinsert(connectedRealms, 1, GetNormalizedRealmName())
+    if #connectedRealms == 0 then
+        tinsert(connectedRealms, GetNormalizedRealmName())
+    end
 
     -- 保存服务器信息
     BFS_Realm = {
