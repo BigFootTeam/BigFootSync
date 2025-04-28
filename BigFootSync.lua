@@ -128,6 +128,9 @@ end
 -- 重载后/登入时
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
+    local connectedRealms = GetAutoCompleteRealms()
+    tinsert(connectedRealms, 1, GetNormalizedRealmName())
+
     -- 保存服务器信息
     BFS_Realm = {
         ["id"] = GetRealmID(), -- 服务器ID
@@ -135,6 +138,7 @@ function frame:PLAYER_LOGIN()
         ["normalizedName"] = GetNormalizedRealmName(), -- 服务器名（去除空格等符号，外服常见）
         ["region"] = GetCVar("portal"), -- 区域
         ["clientVersion"] = U.GetBigFootClientVersion(),
+        ["connectedRealms"] = table.concat(connectedRealms, ","), -- 大服务器
     }
 
     -- 保存玩家自己的基础信息到 BFS_Characters（所有收集到的玩家数据）
