@@ -68,6 +68,7 @@ if BigFootSync.isRetail then
     end
 
     local function SaveTalentsByID(t, specID, configID, isActive)
+        if not configID then return end
         local exportStream = ExportUtil.MakeExportDataStream()
         local configInfo = C_Traits.GetConfigInfo(configID)
         local name = isActive and "CURRENT_ACTIVE" or "$" .. configInfo.name
