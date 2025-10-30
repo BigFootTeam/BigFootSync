@@ -124,8 +124,27 @@ if BigFootSync.isRetail then
         --     end
         -- end
     end
+elseif BigFootSync.isMists then
+    TL.SaveTalents = function(t)
+        wipe(t)
+
+        -- GetTalentTabInfo, GetTalentTierInfo
+        local specGroupIndex = C_SpecializationInfo.GetActiveSpecGroup()
+        if specGroupIndex ~= 1 and specGroupIndex ~= 2 then return end
+
+        -- t["tiers"] = {}
+        t["info"] = ""
+
+        for i = 1, 6 do
+            local tierAvailable, selectedTalent, tierUnlockLevel = GetTalentTierInfo(i, specGroupIndex)
+            -- tinsert(t["tiers"], selectedTalent)
+            t["info"] = t["info"] .. selectedTalent
+        end
+    end
 else
     TL.SaveTalents = function(t)
+        wipe(t)
+
         -- 仅保存当前天赋配置
         for tabIndex = 1, GetNumTalentTabs() do
             -- 每个“专精”单独存放
