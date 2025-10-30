@@ -166,8 +166,6 @@ function frame:PLAYER_LOGIN()
     E.UpdateEquipments(BFS_Account["equipments"])
     -- 专业
     BFS_Account["professions"] = PF.GetProfessions()
-    -- 属性
-    P.SavePlayerStatData(BFS_Account["stats"])
     -- 商栈
     if BigFootSync.isRetail then
         TP.UpdateTradingPostCurrency(BFS_Account["tradingPost"])
@@ -187,6 +185,11 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_ENTERING_WORLD()
     frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+
+    -- 属性（需要延迟获取）
+    C_Timer.After(1, function()
+        P.SavePlayerStatData(BFS_Account["stats"])
+    end)
 
     -- 已经在队伍中
     if IsInGroup() then
