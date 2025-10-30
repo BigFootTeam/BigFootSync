@@ -352,10 +352,16 @@ else
         INVSLOT_TRINKET1,
         INVSLOT_TRINKET2,
         INVSLOT_BACK,
-        INVSLOT_RANGED,
     }
 
-    local NUM_SLOTS = 17
+    local NUM_SLOTS
+
+    if BigFootSync.isMists then
+        NUM_SLOTS = 16
+    else
+        tinsert(SLOTS, INVSLOT_RANGED)
+        NUM_SLOTS = 17
+    end
 
     local function GetSlotLevel(unit, slot)
         local link = GetInventoryItemLink(unit, slot)
@@ -401,7 +407,6 @@ else
                     cached[guid] = GetTime()
                     -- print(t["itemLevel"])
                 end
-
             end
         end)
     end

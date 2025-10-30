@@ -148,7 +148,7 @@ function frame:PLAYER_LOGIN()
 
     -- 保存玩家自己的部分基础信息到 BFS_Account
     BFS_Account["fullName"] = U.UnitName("player")
-    if BigFootSync.isRetail then
+    if BigFootSync.isRetail or BigFootSync.isMists then
         -- 专精，无法从 GetSpecializationInfo(GetSpecialization()) 获取，原因未知
         -- t["specId"] = GetSpecializationInfoForClassID(t["classId"], GetSpecialization())
         BFS_Account["specId"] = PlayerUtil.GetCurrentSpecID()
@@ -393,11 +393,11 @@ end
 ---------------------------------------------------------------------
 -- 鼠标指向
 ---------------------------------------------------------------------
-function frame:UPDATE_MOUSEOVER_UNIT()
-    if InCombatLockdown() then return end
-    P.SaveUnitBaseData(BFS_Characters, "mouseover", true)
-    RequestUnitItemLevel("mouseover")
-end
+-- function frame:UPDATE_MOUSEOVER_UNIT()
+--     if InCombatLockdown() then return end
+--     P.SaveUnitBaseData(BFS_Characters, "mouseover", true)
+--     RequestUnitItemLevel("mouseover")
+-- end
 
 ---------------------------------------------------------------------
 -- 当前目标

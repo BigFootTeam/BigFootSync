@@ -1,4 +1,4 @@
-﻿## Interface: 11508
+﻿## Interface: 50502
 ## Version: r22
 ## Title: BigFootSync
 ## Title-zhCN: 大脚数据同步 |cffc0c0c0r22|r

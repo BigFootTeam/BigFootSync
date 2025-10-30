@@ -114,6 +114,8 @@ function P.SavePlayerStatData(t)
     t["resistance"] = nil
 
     if BigFootSync.isRetail then
+        -- 精通（直接加百分号）
+        t["mastery"] = GetMasteryEffect()
         -- 全能（直接加百分号，伤害增加值，若要获取受到伤害减免值，除以2即可）
         t["versatility"] = GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE)
         -- 吸血
@@ -122,6 +124,9 @@ function P.SavePlayerStatData(t)
         t["avoidance"] = GetAvoidance()
         -- 加速
         t["speed"] = GetSpeed()
+    elseif BigFootSync.isMists then
+        -- 精通（直接加百分号）
+        t["mastery"] = GetMasteryEffect()
     else
         -- 抗性 https://warcraft.wiki.gg/wiki/API_UnitResistance
         t["resistance"] = {
@@ -143,6 +148,7 @@ end
 ---------------------------------------------------------------------
 -- 保存玩家自己的 CombatRating 和 CombatRatingBonus
 ---------------------------------------------------------------------
+--[[
 local CR_RETAIL = {
     -- "CR_UNUSED_1", -- 1
     "CR_DEFENSE_SKILL", -- 2
@@ -201,10 +207,12 @@ local function SavePlayerCombatRatingData(t)
     local CR
     if BigFootSync.isRetail then
         CR = CR_RETAIL
-    elseif BigFootSync.isWrath then
-        CR = CR_WRATH
+    elseif BigFootSync.isMists then
+        CR = CR_MISTS -- TODO: 之后再说
     elseif BigFootSync.isCata then
         CR = CR_CATA -- TODO: 之后再说
+    elseif BigFootSync.isWrath then
+        CR = CR_WRATH
     end
     if not CR then return end
 
@@ -217,6 +225,7 @@ local function SavePlayerCombatRatingData(t)
         end
     end
 end
+]]
 
 
 ---------------------------------------------------------------------

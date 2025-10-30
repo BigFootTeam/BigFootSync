@@ -6,6 +6,7 @@ BigFootSync.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 BigFootSync.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 BigFootSync.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 BigFootSync.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+BigFootSync.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 
 ---@class Utils
 local U = BigFootSync.utils
@@ -71,7 +72,9 @@ end
 -- MaxLevel
 ---------------------------------------------------------------------
 function U.GetMaxLevel()
-    if BigFootSync.isCata then
+    if BigFootSync.isMists then
+        return 90
+    elseif BigFootSync.isCata then
         return 85
     elseif BigFootSync.isWrath then
         return 80
