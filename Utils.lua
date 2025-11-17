@@ -22,7 +22,7 @@ function U.GetBigFootClientVersion(wowProjectID)
         return 1
     elseif wowProjectID == WOW_PROJECT_MISTS_CLASSIC then -- 熊猫人
         return 2
-    else -- 时光
+    else -- 时光（WOW_PROJECT_WRATH_CLASSIC）
         return 3
     end
 end
