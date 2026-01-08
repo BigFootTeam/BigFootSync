@@ -4,6 +4,7 @@ BigFootSync.utils = {}
 
 BigFootSync.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 BigFootSync.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+BigFootSync.isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 BigFootSync.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 BigFootSync.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 BigFootSync.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
@@ -22,8 +23,10 @@ function U.GetBigFootClientVersion(wowProjectID)
         return 1
     elseif wowProjectID == WOW_PROJECT_MISTS_CLASSIC then -- 熊猫人
         return 2
-    else -- 时光（WOW_PROJECT_WRATH_CLASSIC）
+    elseif wowProjectID == WOW_PROJECT_WRATH_CLASSIC then -- 时光（WOW_PROJECT_WRATH_CLASSIC）
         return 3
+    else -- TBC
+        return 4
     end
 end
 

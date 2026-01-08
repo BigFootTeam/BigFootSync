@@ -1,4 +1,4 @@
-﻿## Interface: 11508
+﻿## Interface: 20505
 ## Version: r26
 ## Title: BigFootSync
 ## Title-zhCN: 大脚数据同步 |cffc0c0c0r26|r
