@@ -132,12 +132,15 @@ function frame:PLAYER_LOGIN()
     if #connectedRealms == 0 then
         tinsert(connectedRealms, GetNormalizedRealmName())
     end
+    for i, realm in next, connectedRealms do
+        connectedRealms[i] = U.RemoveRealmSuffix(realm)
+    end
 
     -- 保存服务器信息
     BFS_Realm = {
         ["id"] = GetRealmID(), -- 服务器ID
-        ["name"] = GetRealmName(), -- 服务器名
-        ["normalizedName"] = GetNormalizedRealmName(), -- 服务器名（去除空格等符号，外服常见）
+        ["name"] = U.GetRealmName(), -- 服务器名
+        ["normalizedName"] = U.GetNormalizedRealmName(), -- 服务器名（去除空格等符号，外服常见）
         ["region"] = GetCVar("portal"), -- 区域
         ["clientVersion"] = U.GetBigFootClientVersion(),
         ["connectedRealms"] = table.concat(connectedRealms, ","), -- 大服务器
@@ -249,7 +252,7 @@ function frame:GUILD_ROSTER_UPDATE()
     if not IsInGuild() then return end
 
     local guildName, _, _, guildRealm = GetGuildInfo("player")
-    guildRealm = guildRealm or GetNormalizedRealmName()
+    guildRealm = guildRealm or U.GetNormalizedRealmName()
 
     local guildFaction = GetGuildFactionGroup() == 0 and "Horde" or "Alliance"
 

@@ -25,7 +25,7 @@ function U.GetBigFootClientVersion(wowProjectID)
         return 2
     elseif wowProjectID == WOW_PROJECT_WRATH_CLASSIC then -- 时光（WOW_PROJECT_WRATH_CLASSIC）
         return 3
-    else -- TBC
+    elseif wowProjectID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then -- TBC anniversary
         return 4
     end
 end
@@ -92,6 +92,25 @@ function U.GetMaxLevel()
 end
 
 ---------------------------------------------------------------------
+-- realm
+---------------------------------------------------------------------
+local function RemoveSuffix(realmName)
+    if realmName and realmName:find("^时光") then
+        return realmName:match("^时光[VI]+")
+    end
+    return realmName
+end
+U.RemoveRealmSuffix = RemoveSuffix
+
+function U.GetRealmName()
+    return RemoveSuffix(GetRealmName())
+end
+
+function U.GetNormalizedRealmName()
+    return RemoveSuffix(GetNormalizedRealmName())
+end
+
+---------------------------------------------------------------------
 -- UnitName
 ---------------------------------------------------------------------
 function U.UnitName(unit)
@@ -103,6 +122,8 @@ function U.UnitName(unit)
     -- 同服角色不带服务器名，不可使用 GetRealmName()，其中可能包含空格或短横线
     if not realm then realm = GetNormalizedRealmName() end
     if not realm or realm == "" then return end
+
+    realm = RemoveSuffix(realm)
 
     return name.."-"..realm, name, realm
 end

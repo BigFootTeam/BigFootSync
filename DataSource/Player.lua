@@ -276,8 +276,8 @@ function P.SaveFriendData(t)
             name, realm = strsplit("-", info.name)
         else
             name = info.name
-            realm = GetNormalizedRealmName()
-            info.name = info.name.."-"..GetNormalizedRealmName()
+            realm = U.GetNormalizedRealmName()
+            info.name = info.name.."-"..U.GetNormalizedRealmName()
         end
 
         if not t[info.name] then
