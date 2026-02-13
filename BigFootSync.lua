@@ -410,8 +410,10 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_TARGET_CHANGED()
     if InCombatLockdown() then return end
-    P.SaveUnitBaseData(BFS_Characters, "target", true)
-    RequestUnitItemLevel("target")
+    local success = P.SaveUnitBaseData(BFS_Characters, "target", true)
+    if success then
+        RequestUnitItemLevel("target")
+    end
 end
 
 ---------------------------------------------------------------------

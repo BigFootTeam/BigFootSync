@@ -55,6 +55,8 @@ function P.SaveUnitBaseData(t, unit, useFullNameAsIndex)
     if UnitIsUnit("player", unit) and t["level"] == U.GetMaxLevel() then
         t["itemLevel"] = Round(select(2, GetAverageItemLevel()))
     end
+
+    return true
 end
 
 

@@ -113,11 +113,13 @@ end
 ---------------------------------------------------------------------
 -- UnitName
 ---------------------------------------------------------------------
+local issecretvalue = issecretvalue or function() return false end
+
 function U.UnitName(unit)
     if not unit or not UnitIsPlayer(unit) then return end
 
     local name, realm = UnitNameUnmodified(unit)
-    if not name or name == "" then return end
+    if issecretvalue(name) or not name or name == "" then return end
 
     -- 同服角色不带服务器名，不可使用 GetRealmName()，其中可能包含空格或短横线
     if not realm then realm = GetNormalizedRealmName() end
