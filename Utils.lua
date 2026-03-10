@@ -87,7 +87,7 @@ function U.GetMaxLevel()
         -- Upon initial login, this will return the result of GetMaxLevelForExpansionLevel(0) (currently 30)
         -- until sometime between PLAYER_ENTERING_WORLD and when a SHOW_SUBSCRIPTION_INTERSTITIAL would fire for a lapsed subscription
         -- but then provides the correct value through subsequent logins and reloads on the same server.
-        return 80 -- GetMaxLevelForLatestExpansion()
+        return 90 -- GetMaxLevelForLatestExpansion()
     end
 end
 
