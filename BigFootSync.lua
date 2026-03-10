@@ -86,7 +86,6 @@ function frame:ADDON_LOADED(arg)
         frame:RegisterEvent("PLAYER_LOGIN")
         frame:RegisterEvent("GROUP_ROSTER_UPDATE")
         frame:RegisterEvent("GUILD_ROSTER_UPDATE")
-        -- frame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
         frame:RegisterEvent("PLAYER_TARGET_CHANGED")
         frame:RegisterEvent("PLAYER_ENTERING_WORLD")
         frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
@@ -94,6 +93,9 @@ function frame:ADDON_LOADED(arg)
         if BigFootSync.isRetail then
             frame:RegisterEvent("INSPECT_READY")
             frame:RegisterEvent("TRAIT_CONFIG_UPDATED")
+        end
+        if not BigFootSync.isWrath then
+            frame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
         end
     end
 end
@@ -399,11 +401,11 @@ end
 ---------------------------------------------------------------------
 -- 鼠标指向
 ---------------------------------------------------------------------
--- function frame:UPDATE_MOUSEOVER_UNIT()
---     if InCombatLockdown() then return end
---     P.SaveUnitBaseData(BFS_Characters, "mouseover", true)
---     RequestUnitItemLevel("mouseover")
--- end
+function frame:UPDATE_MOUSEOVER_UNIT()
+    if InCombatLockdown() then return end
+    P.SaveUnitBaseData(BFS_Characters, "mouseover", true)
+    -- RequestUnitItemLevel("mouseover")
+end
 
 ---------------------------------------------------------------------
 -- 当前目标
