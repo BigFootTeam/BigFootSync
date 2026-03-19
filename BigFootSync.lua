@@ -94,9 +94,7 @@ function frame:ADDON_LOADED(arg)
             frame:RegisterEvent("INSPECT_READY")
             frame:RegisterEvent("TRAIT_CONFIG_UPDATED")
         end
-        if not BigFootSync.isWrath then
-            frame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
-        end
+        frame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
     end
 end
 
@@ -403,6 +401,7 @@ end
 ---------------------------------------------------------------------
 function frame:UPDATE_MOUSEOVER_UNIT()
     if InCombatLockdown() then return end
+    if BigFootSync.isWrath and not GetGuildInfo("mouseover") then return end
     P.SaveUnitBaseData(BFS_Characters, "mouseover", true)
     -- RequestUnitItemLevel("mouseover")
 end
