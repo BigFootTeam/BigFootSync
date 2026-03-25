@@ -13,6 +13,20 @@ BigFootSync.isMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
 local U = BigFootSync.utils
 
 ---------------------------------------------------------------------
+-- secret
+---------------------------------------------------------------------
+local issecretvalue = issecretvalue or function() return false end
+local hasanysecretvalues = hasanysecretvalues or function() return false end
+
+function U.IsSecretValue(value)
+    return issecretvalue(value)
+end
+
+function U.HasAnySecretValues(...)
+    return hasanysecretvalues(...)
+end
+
+---------------------------------------------------------------------
 -- GetBigFootClientVersion
 ---------------------------------------------------------------------
 function U.GetBigFootClientVersion(wowProjectID)
@@ -113,13 +127,11 @@ end
 ---------------------------------------------------------------------
 -- UnitName
 ---------------------------------------------------------------------
-local issecretvalue = issecretvalue or function() return false end
-
 function U.UnitName(unit)
     if not unit or not UnitIsPlayer(unit) then return end
 
     local name, realm = UnitNameUnmodified(unit)
-    if issecretvalue(name) or not name or name == "" then return end
+    if U.IsSecretValue(name) or not name or name == "" then return end
 
     -- 同服角色不带服务器名，不可使用 GetRealmName()，其中可能包含空格或短横线
     if not realm then realm = GetNormalizedRealmName() end

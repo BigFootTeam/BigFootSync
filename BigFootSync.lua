@@ -373,7 +373,7 @@ local function RequestUnitItemLevel(unit)
     -- if level == U.GetMaxLevel() and (BigFootSync.isRetail or CheckInteractDistance(unit, 3)) and CanInspect(unit) then
     if level == U.GetMaxLevel() and CanInspect(unit) then
         local guid = UnitGUID(unit)
-        if guid and E.ShouldUpdateUnitItemLevel(guid) then
+        if guid and not U.IsSecretValue(guid) and E.ShouldUpdateUnitItemLevel(guid) then
             local fullName = U.UnitName(unit)
             -- print("REQUEST", unit, guid, fullName)
             GUIDS[guid] = unit
@@ -389,7 +389,7 @@ function frame:INSPECT_READY(guid)
         GUIDS[guid] = nil
         local fullName = U.UnitName(unit)
         local correct_guid = UnitGUID(unit)
-        if correct_guid == guid and BFS_Characters[fullName] then
+        if not U.HasAnySecretValues(correct_guid, guid) and correct_guid == guid and BFS_Characters[fullName] then
             -- print("INSPECT_READY", unit, guid, fullName)
             E.SaveUnitItemLevel(BFS_Characters[fullName], unit, guid)
         end
