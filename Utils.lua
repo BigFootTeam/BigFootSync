@@ -109,7 +109,7 @@ end
 -- realm
 ---------------------------------------------------------------------
 local function RemoveSuffix(realmName)
-    if realmName and realmName:find("^时光") then
+    if realmName and realmName:find("^时光[VI]+") then
         return realmName:match("^时光[VI]+")
     end
     return realmName
