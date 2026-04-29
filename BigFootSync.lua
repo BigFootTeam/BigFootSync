@@ -190,9 +190,9 @@ function frame:PLAYER_ENTERING_WORLD()
     frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
     -- 属性（需要延迟获取）
-    C_Timer.After(1, function()
-        P.SavePlayerStatData(BFS_Account["stats"])
-    end)
+    -- C_Timer.After(1, function()
+    --     P.SavePlayerStatData(BFS_Account["stats"])
+    -- end)
 
     -- 已经在队伍中
     if IsInGroup() then
@@ -226,7 +226,7 @@ frame.PERKS_PROGRAM_REFUND_SUCCESS = frame.PERKS_PROGRAM_DATA_REFRESH
 function frame:PLAYER_EQUIPMENT_CHANGED(equipmentSlot, hasCurrent)
     if InCombatLockdown() then return end
     E.UpdateEquipments(BFS_Account["equipments"], equipmentSlot)
-    P.SavePlayerStatData(BFS_Account["stats"])
+    -- P.SavePlayerStatData(BFS_Account["stats"])
 end
 
 ---------------------------------------------------------------------
